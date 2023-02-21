@@ -2,11 +2,13 @@ import { Box } from '@mui/system';
 import React from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import CarouselCard from './CarouselCard';
 
 export type image = {
   id: number;
   src: string;
   alt: string;
+  desc: string;
 };
 export interface carouselProps {
   data: image[];
@@ -41,9 +43,7 @@ export default function ImageCarousel({ data }: carouselProps) {
       autoPlaySpeed={1000}
     >
       {data.map((image) => (
-        <Box mr={[1, 2, 3]} sx={{ height: '10rem' }}>
-          <img key={image.id} src={image.src} alt={image.alt} style={{ objectFit: 'cover' }} />
-        </Box>
+        <CarouselCard key={image.id} {...image} />
       ))}
     </Carousel>
   );
