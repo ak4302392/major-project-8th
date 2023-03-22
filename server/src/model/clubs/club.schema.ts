@@ -1,40 +1,47 @@
 import mongoose from "mongoose";
 import { Event } from "@/types/dto/event.dto";
+import { Club } from "@/types/dto/club.dto";
 
-interface memory {
+export interface memory {
   name: string;
+  desc: string;
   image: string;
 }
 
-interface organizerAccount {
+export interface organizerAccount {
   id: string;
   password: string;
 }
 
-interface cordinatorAccount {
+export interface cordinatorAccount {
   id: string;
   password: string;
 }
 
-interface accounts {
+export interface accounts {
   orgAccount: organizerAccount;
   corAccount: cordinatorAccount;
 }
 export interface ClubOptional {
   id?: string;
+  clubId?: string;
   name?: string;
   desc?: string;
   images?: string[];
   industryType?: string;
-  upcomingEvents?: [];
+  upcomingEvents?: string[];
   accounts?: accounts;
   cordinatorName?: string;
   memories?: memory[];
 }
 
-export interface ClubDocument extends Event, mongoose.Document {}
+export interface ClubDocument extends Club, mongoose.Document {}
 
-const eventSchema = new mongoose.Schema({
+const clubSchema = new mongoose.Schema({
+  clubId: {
+    type: String,
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -44,7 +51,7 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   images: {
-    type: String,
+    type: Array,
     required: true,
   },
   industryType: {
@@ -52,11 +59,20 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   upcomingEvents: {
-    type: String,
+    type: Array,
     required: false,
   },
   accounts: {
-    type: String,
+    type: {
+      orgAccount: {
+        id: String,
+        password: String,
+      },
+      corAccount: {
+        id: String,
+        password: String,
+      },
+    },
     required: true,
   },
   cordinatorName: {
@@ -64,9 +80,9 @@ const eventSchema = new mongoose.Schema({
     required: false,
   },
   memories: {
-    type: String,
+    type: Array,
     required: false,
   },
 });
 
-export const EventModel = mongoose.model<ClubDocument>("Event", eventSchema);
+export const ClubModel = mongoose.model<ClubDocument>("Club", clubSchema);

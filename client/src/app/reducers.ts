@@ -7,6 +7,7 @@ import { connectRouter } from 'connected-react-router';
 
 // import dashboardReducer from '../components/dashboard/dashboardSlice';
 import authReducer from '../components/auth/authSlice';
+import clubReducer from '../components/auth/organizerAuthSlice';
 // import adminReducer from '../components/dashboard/admin/adminSlice';
 import coreReducer from '../components/core/coreSlice';
 
@@ -20,6 +21,7 @@ const createReducer = (injectedReducers = {}) => {
   const rootReducer = combineReducers({
     // dashboard: dashboardReducer,
     auth: authReducer,
+    club: clubReducer,
     // admin: adminReducer,
     core: coreReducer,
     router: connectRouter(history),

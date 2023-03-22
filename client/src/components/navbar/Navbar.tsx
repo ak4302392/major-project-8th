@@ -16,6 +16,7 @@ import { getToken, isUserAuthenticated, logout } from '../auth/authSlice';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import store from '../../app/state';
+import { isOrganizerAuthenticated, organizerLogout } from '../auth/organizerAuthSlice';
 
 const useStyles = makeStyles((theme) => {});
 
@@ -81,6 +82,8 @@ export const Navbar = () => {
 
   const isLoggedIn = isUserAuthenticated(store.getState());
 
+  const isOrganizerLoggedIn = isOrganizerAuthenticated(store.getState());
+
   //below code is to set the display of the bottom part of
   //the navbar as none when scrolling up
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
@@ -136,6 +139,11 @@ export const Navbar = () => {
     window.location.assign('/');
   };
 
+  const handleOrganizerLogout = () => {
+    dispatch(organizerLogout());
+    window.location.assign('/');
+  }
+
   return (
     <Box
       display='flex'
@@ -178,7 +186,8 @@ export const Navbar = () => {
             STUDENT ACTIVITY PORTAL
           </Typography>
         </Box>
-        {isLoggedIn ? (
+
+        {isLoggedIn && (
           <Box display='flex' gap={1}>
             <Button variant='contained' href='/user/dashboard' color='secondary'>
               USER PROFILE
@@ -187,7 +196,20 @@ export const Navbar = () => {
               LOG OUT
             </Button>
           </Box>
-        ) : (
+        )}
+
+        {isOrganizerLoggedIn && (
+          <Box display='flex' gap={1}>
+            <Button variant='contained'  href='/auth/log-in' color='primary'>
+              CLUB PROFILE
+            </Button>
+            <Button variant='contained' onClick={handleOrganizerLogout} color='error'>
+              LOG OUT
+            </Button>
+          </Box>
+        )}
+
+        {!isLoggedIn && !isOrganizerLoggedIn && (
           <Box display='flex' gap={1}>
             <Button variant='contained' href='/auth/log-in' color='primary'>
               LOG IN

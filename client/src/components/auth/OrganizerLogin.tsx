@@ -18,6 +18,7 @@ import { loginAsync } from './authSlice';
 import { AppDispatch } from '../../app/type';
 import { AppRoutes } from '../../routing/routes';
 import { push } from 'connected-react-router';
+import { OrganizerLoginAsync } from './organizerAuthSlice';
 
 type Option = {
   text: string;
@@ -48,19 +49,9 @@ const OrganizerLogin: FC = (props) => {
       password: Yup.string().max(255).required('Password is required'),
     }),
     onSubmit: async (values, helpers): Promise<void> => {
-      // await dispatch(loginAsync({ email: values.email, password: values.password }));
-
-      if (
-        values.club === 'Robaroo' &&
-        values.id === 'robaroo@gmail.com' &&
-        values.password === '12345'
-      ) {
-        console.log('verified');
-        
-      } else {
-        console.log('not verified');
-      }
-
+      await dispatch(
+        OrganizerLoginAsync({ clubId: values.club, email: values.id, password: values.password })
+      );
       // } catch (err: any) {
       //   console.log(err);
       // }

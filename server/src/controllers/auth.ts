@@ -25,7 +25,6 @@ export const createUser = async (req: Request, res: Response) => {
     } = req.body;
 
     if (passwordConfirm != password) {
-      console.log("I am here");
       return res.status(400).send({
         message: "Confirm password does not match",
       });

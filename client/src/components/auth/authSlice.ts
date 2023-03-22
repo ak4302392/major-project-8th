@@ -32,37 +32,6 @@ const initialState: AuthState = {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 
-// interface ValidationErrors {
-//   errorMessage: string;
-//   field_errors: Record<string, string>;
-// }
-
-// export const loginAsync = createAsyncThunk<{
-//   rejectValue: ValidationErrors;
-// }>('auth/loginThunk', async (payload: LoginRequestPayload, { rejectWithValue }, thunkApi) => {
-//   try {
-//     const response = await login(payload);
-//     const data = response.data as LoginResponsePayload;
-//     window.location.assign(AppRoutes.DEFAULT);
-//     return data;
-//   } catch (error: any) {
-//     if (!err.response) {
-//       throw err;
-//     }
-//     return rejectWithValue(err.response.data);
-//     throw error.response.data.message;
-//   }
-// });
-
-interface FieldErrors {
-  [key: string]: string;
-}
-
-interface LoginRejectValue {
-  errorMessage: string;
-  fieldErrors: FieldErrors;
-}
-
 export const loginAsync = createAsyncThunk(
   'auth/loginThunk',
   async (payload: LoginRequestPayload, thunkApi) => {
