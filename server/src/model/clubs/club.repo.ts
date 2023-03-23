@@ -27,6 +27,12 @@ const update = async (id: string, data: Club) => {
   });
 };
 
+const updateByClubId = async (clubId: string, data: Club) => {
+  await ClubModel.findOneAndUpdate({ clubId: clubId }, data, {
+    new: true,
+  });
+};
+
 const findMany = async (
   filter: any,
   projection: any
@@ -51,4 +57,5 @@ export default {
   update,
   findMany,
   findOneById,
+  updateByClubId,
 };

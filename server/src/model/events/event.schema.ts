@@ -1,11 +1,13 @@
 import { Event } from "@/types/dto/event.dto";
 import mongoose from "mongoose";
+import { nanoid } from "nanoid";
 
 export interface EventOptional {
   id?: string;
   name?: string;
   desc?: string;
   clubName?: string;
+  clubId?: string;
   eventDate?: Date;
   registeredMembers?: mongoose.Types.ObjectId[];
   images?: string[];
@@ -17,6 +19,12 @@ export interface EventOptional {
 export interface EventDocument extends Event, mongoose.Document {}
 
 const eventSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    default: () => nanoid(7),
+    index: { unique: true },
+  },
   name: {
     type: String,
     required: true,
@@ -26,6 +34,10 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   clubName: {
+    type: String,
+    required: true,
+  },
+  clubId: {
     type: String,
     required: true,
   },

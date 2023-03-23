@@ -4,6 +4,8 @@
 
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 
 // import dashboardReducer from '../components/dashboard/dashboardSlice';
 import authReducer from '../components/auth/authSlice';
@@ -17,6 +19,11 @@ import history from './history';
  * Merges the main reducer with the router state and dynamically injected reducers
  */
 
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
 const createReducer = (injectedReducers = {}) => {
   const rootReducer = combineReducers({
     // dashboard: dashboardReducer,
@@ -27,6 +34,8 @@ const createReducer = (injectedReducers = {}) => {
     router: connectRouter(history),
     ...injectedReducers,
   });
+
+  const persistedReducer = persistReducer(persistConfig, rootReducer);
 
   return rootReducer;
 };

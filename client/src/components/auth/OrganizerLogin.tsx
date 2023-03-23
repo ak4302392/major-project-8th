@@ -1,14 +1,16 @@
 import { FC, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import {
-  Autocomplete,
   Box,
   Button,
   Card,
   CardContent,
   Container,
-  Divider,
-  Link,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from '@mui/material';
@@ -19,6 +21,7 @@ import { AppDispatch } from '../../app/type';
 import { AppRoutes } from '../../routing/routes';
 import { push } from 'connected-react-router';
 import { OrganizerLoginAsync } from './organizerAuthSlice';
+import { makeStyles } from '@material-ui/styles';
 
 type Option = {
   text: string;
@@ -26,14 +29,38 @@ type Option = {
 };
 
 const clubs: Option[] = [
-  { text: 'Robaroo', value: 'Robaroo' },
-  { text: 'Tooryanad', value: 'JO' },
-  { text: 'Ae-se-Aenak', value: 'KZ' },
-  { text: 'E-cell', value: 'KE' },
-  { text: 'Rotra Club', value: 'KI' },
+  { text: 'Roobaroo', value: '101' },
+  { text: 'A se Aenak', value: '102' },
+  { text: 'Maffick', value: '103' },
+  { text: 'Spic Macay', value: '104' },
+  { text: 'Robotics', value: '201' },
+  { text: 'Vision', value: '202' },
+  { text: 'Think India', value: '203' },
+  { text: 'Pixel', value: '204' },
+  { text: 'Technosearch', value: '205' },
+  { text: 'Rajbhasha Cell', value: '301' },
+  { text: 'Drishtant Cell', value: '302' },
+  { text: 'Magazine Editorial Cell', value: '303' },
+  { text: 'Debating Cell', value: '304' },
+  { text: 'Quizzers Cell', value: '305' },
+  { text: 'ISTE', value: '401' },
+  { text: 'IEEE', value: '402' },
+  { text: 'Purge', value: '403' },
+  { text: 'Inspire', value: '405' },
+  { text: 'NSS', value: '406' },
+  { text: 'EBSB', value: '407' },
 ];
 
+const useStyles = makeStyles(() => ({
+  scrollbar: {
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  },
+}));
+
 const OrganizerLogin: FC = (props) => {
+  const classes = useStyles();
   const [errMsg, setErrMsg] = useState('');
   const dispatch = useDispatch<AppDispatch>();
   const formik = useFormik({
@@ -103,38 +130,44 @@ const OrganizerLogin: FC = (props) => {
               }}
             >
               <form noValidate onSubmit={formik.handleSubmit} {...props}>
-                {/* <Autocomplete
-                  getOptionLabel={(option: Option) => option.text}
-                  options={clubs}
-                  renderInput={(params): JSX.Element => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      label='Select a club'
-                      name='club'
-                      error={Boolean(formik.touched.club && formik.errors.club)}
-                      helperText={formik.touched.club && formik.errors.club}
-                      margin='normal'
-                      type='text'
-                      value={formik.values.club}
-                      onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                    />
-                  )}
-                /> */}
-
-                <TextField
-                  fullWidth
-                  label='Select a club'
-                  name='club'
-                  error={Boolean(formik.touched.club && formik.errors.club)}
-                  helperText={formik.touched.club && formik.errors.club}
+                <FormControl
                   margin='normal'
-                  type='text'
-                  value={formik.values.club}
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                />
+                  error={Boolean(formik.touched.club && formik.errors.club)}
+                  fullWidth
+                  variant='outlined'
+                >
+                  <InputLabel>Club</InputLabel>
+                  <Select
+                    value={formik.values.club}
+                    label='club'
+                    name='club'
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    MenuProps={{
+                      style: {
+                        maxHeight: '300px',
+                        minWidth: '150px',
+                      },
+                      PaperProps: {
+                        className: classes.scrollbar,
+                        style: {
+                          width: '1px',
+                        },
+                      },
+                    }}
+                    inputProps={{
+                      autoComplete: 'on',
+                    }}
+                    defaultValue='Pacific Standard Time'
+                  >
+                    {clubs.map((club) => {
+                      return <MenuItem value={club.value}>{club.text}</MenuItem>;
+                    })}
+                  </Select>
+                  {formik.touched.club && (
+                    <FormHelperText>{formik.errors.club}</FormHelperText>
+                  )}
+                </FormControl>
 
                 <TextField
                   fullWidth

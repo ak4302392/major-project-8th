@@ -6,7 +6,7 @@ export interface Club {
   desc: string;
   images: string[];
   industryType: string;
-  upcomingEvents: [];
+  upcomingEvents: string[];
   accounts: accounts;
   cordinatorName: string;
   memories: memory[];

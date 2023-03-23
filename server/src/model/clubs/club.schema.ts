@@ -59,7 +59,7 @@ const clubSchema = new mongoose.Schema({
     required: true,
   },
   upcomingEvents: {
-    type: Array,
+    type: [String],
     required: false,
   },
   accounts: {

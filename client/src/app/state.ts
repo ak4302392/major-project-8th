@@ -12,8 +12,9 @@ import { setIsLoading, setResponseInfo } from '../components/core/coreSlice';
 import history from './history';
 import createReducer from './reducers';
 import { listenerMiddleware } from './listenerMiddleware';
+import persistStore from 'redux-persist/es/persistStore';
 
-function configureAppStore(initialState = {}) {
+export function configureAppStore(initialState = {}) {
   const middlewares = [thunk, routerMiddleware(history)];
 
   const store = configureStore({
@@ -23,19 +24,14 @@ function configureAppStore(initialState = {}) {
     preloadedState: initialState,
     devTools: process.env.NODE_ENV !== 'production',
   });
+  const persistor = persistStore(store);
 
-  // Make reducers hot reloadable, see http://mxs.is/googmo
-  /* istanbul ignore next */
-  // if (module.hot) {
-  //   module.hot.accept('./reducers', () => {
-  //     forceReducerReload(store);
-  //   });
-  // }
-
-  return store;
+  return { store, persistor };
 }
 
-const store = configureAppStore();
+const store = configureAppStore().store;
+
+export const persistor = configureAppStore().persistor;
 
 const setupAxios = (axiosStatic: AxiosStatic, storeLocal: any) => {
   axiosStatic.interceptors.request.use(

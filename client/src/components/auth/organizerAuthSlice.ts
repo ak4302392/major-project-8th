@@ -18,20 +18,22 @@ export interface ClubState {
   club: club;
 }
 
+const clubInitialData: club = {
+  clubId: '',
+  name: '',
+  desc: '',
+  images: [],
+  industryType: '',
+  upcomingEvents: [],
+  cordinatorName: '',
+  memories: [],
+};
+
 const initialState: ClubState = {
   isOrganizerLoggedIn:
     typeof window !== 'undefined' ? (localStorage.getItem('OrganizerToken') ? true : false) : false,
   organizerToken: typeof window !== 'undefined' ? localStorage.getItem('OrganizerToken') || '' : '',
-  club: {
-    clubId: '',
-    name: '',
-    desc: '',
-    images: [],
-    industryType: '',
-    upcomingEvents: [],
-    cordinatorName: '',
-    memories: [],
-  },
+  club: clubInitialData,
 };
 
 export const OrganizerLoginAsync = createAsyncThunk(
@@ -39,6 +41,7 @@ export const OrganizerLoginAsync = createAsyncThunk(
   async (payload: OrganizerLoginRequestPayload, thunkApi) => {
     const response = await OrganizerLogin(payload);
     const data = response.data as OrganizerLoginResponsePayload;
+    console.log(data);
     window.location.assign(AppRoutes.DEFAULT);
     return data;
   }
@@ -55,6 +58,9 @@ export const clubSlice = createSlice({
     builder.addCase(OrganizerLoginAsync.fulfilled, (state, action) => {
       state.isOrganizerLoggedIn = true;
       state.organizerToken = action.payload.token;
+      console.log(action.payload.club);
+      state.club = action.payload.club;
+      console.log(state.club);
       if (typeof window !== 'undefined') {
         localStorage.setItem('OrganizerToken', action.payload.token);
       }
@@ -62,6 +68,7 @@ export const clubSlice = createSlice({
     builder.addCase(organizerLogout, (state) => {
       state.isOrganizerLoggedIn = false;
       state.organizerToken = '';
+      state.club = clubInitialData;
       if (typeof window !== 'undefined') {
         localStorage.removeItem('OrganizerToken');
       }
@@ -99,5 +106,7 @@ export const { reset } = clubSlice.actions;
 export const isOrganizerAuthenticated = (state: RootState) => state.club.isOrganizerLoggedIn;
 
 export const getOrganizerToken = (state: RootState) => state.club.organizerToken;
+
+export const getClub = (state: RootState) => state.club.club;
 
 export default clubSlice.reducer;

@@ -84,6 +84,8 @@ export const Navbar = () => {
 
   const isOrganizerLoggedIn = isOrganizerAuthenticated(store.getState());
 
+  // console.log(isOrganizerLoggedIn);
+
   //below code is to set the display of the bottom part of
   //the navbar as none when scrolling up
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
@@ -142,7 +144,7 @@ export const Navbar = () => {
   const handleOrganizerLogout = () => {
     dispatch(organizerLogout());
     window.location.assign('/');
-  }
+  };
 
   return (
     <Box
@@ -200,7 +202,7 @@ export const Navbar = () => {
 
         {isOrganizerLoggedIn && (
           <Box display='flex' gap={1}>
-            <Button variant='contained'  href='/auth/log-in' color='primary'>
+            <Button variant='contained' href='/organizer/dashboard' color='primary'>
               CLUB PROFILE
             </Button>
             <Button variant='contained' onClick={handleOrganizerLogout} color='error'>

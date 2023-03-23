@@ -4,10 +4,9 @@ export interface Event {
   name: string;
   desc: string;
   clubName: string;
+  clubId: string;
   eventDate: Date;
-  registeredMembers?: mongoose.Types.ObjectId[];
-  images?: string[];
+  registeredMembers: mongoose.Types.ObjectId[];
+  images: string[];
   category: string;
-  createdAt?: Date;
-  modifiedAt?: Date;
 }
