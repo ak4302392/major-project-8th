@@ -15,7 +15,7 @@ export default function App() {
   return (
     <Provider store={store}>
       {/* <ConnectedRouter history={history}> */}
-      {/* <PersistGate loading={null} persistor={persistor}> */}
+      <PersistGate loading={null} persistor={persistor}>
         <SettingsProvider>
           <SettingsConsumer>
             {({ settings, saveSettings }) => (
@@ -34,7 +34,7 @@ export default function App() {
           </SettingsConsumer>
         </SettingsProvider>
         {/* </ConnectedRouter> */}
-      {/* </PersistGate> */}
+      </PersistGate>
     </Provider>
   );
 }

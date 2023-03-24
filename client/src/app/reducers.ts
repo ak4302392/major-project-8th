@@ -22,6 +22,7 @@ import history from './history';
 const persistConfig = {
   key: 'root',
   storage,
+  whitelist: ['auth', 'club'],
 };
 
 const createReducer = (injectedReducers = {}) => {
@@ -37,7 +38,7 @@ const createReducer = (injectedReducers = {}) => {
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-  return rootReducer;
+  return persistedReducer;
 };
 
 export default createReducer;

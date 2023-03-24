@@ -46,6 +46,7 @@ export const googleLoginAsync = createAsyncThunk(
   'auth/googleLoginThunk',
   async (payload: GoogleLoginRequest, thunkApi) => {
     const response = await googleLogin(payload);
+    window.location.assign(AppRoutes.DEFAULT);
     const data = response.data as LoginResponsePayload;
     return data;
   }

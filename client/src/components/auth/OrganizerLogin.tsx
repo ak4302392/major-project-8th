@@ -164,9 +164,7 @@ const OrganizerLogin: FC = (props) => {
                       return <MenuItem value={club.value}>{club.text}</MenuItem>;
                     })}
                   </Select>
-                  {formik.touched.club && (
-                    <FormHelperText>{formik.errors.club}</FormHelperText>
-                  )}
+                  {formik.touched.club && <FormHelperText>{formik.errors.club}</FormHelperText>}
                 </FormControl>
 
                 <TextField

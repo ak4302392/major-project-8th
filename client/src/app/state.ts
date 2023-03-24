@@ -13,6 +13,15 @@ import history from './history';
 import createReducer from './reducers';
 import { listenerMiddleware } from './listenerMiddleware';
 import persistStore from 'redux-persist/es/persistStore';
+import {
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
 
 export function configureAppStore(initialState = {}) {
   const middlewares = [thunk, routerMiddleware(history)];
