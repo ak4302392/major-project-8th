@@ -1,5 +1,5 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { push, routerMiddleware } from 'connected-react-router';
+import { push } from 'connected-react-router';
 import { startAppListening } from '../../app/listenerMiddleware';
 import type { RootState } from '../../app/type';
 import { login, googleLogin, register } from '../../boundaries/ad-lnx-backend/auth/api';
@@ -9,14 +9,16 @@ import {
   LoginRequestPayload,
   LoginResponsePayload,
   RegisterRequestPayload,
+  UserData,
 } from '../../boundaries/ad-lnx-backend/auth/model';
-import { Dispatch, SetStateAction } from 'react';
+import { registerToEvent } from '../../boundaries/event-backend/api';
 // import { AppRoutes } from '../../routing/routes';
 
 export interface AuthState {
   isLoggedIn: boolean;
   token: string;
   error: string | null;
+  user: UserData;
 }
 
 const initialState: AuthState = {
@@ -24,6 +26,15 @@ const initialState: AuthState = {
     typeof window !== 'undefined' ? (localStorage.getItem('token') ? true : false) : false,
   token: typeof window !== 'undefined' ? localStorage.getItem('token') || '' : '',
   error: null,
+  user: {
+    name: '',
+    email: '',
+    phone: '',
+    isManitStudent: false,
+    scholarNumber: '',
+    eventsRegistered: [],
+    id: '',
+  },
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -67,6 +78,22 @@ export const registerAsync = createAsyncThunk(
   }
 );
 
+export const registerEventAsync = createAsyncThunk(
+  'auth/registerEventAsync',
+  async (payload: {
+    userId:string,eventId:string
+  }, thunkApi) => {
+    try {
+      const response = await registerToEvent(payload);
+      const data=response
+      window.location.assign(AppRoutes.DEFAULT);
+      return data;
+    } catch (err: any) {
+      throw err;
+    }
+  }
+)
+
 export const logout = createAction('auth/logout');
 
 export const authSlice = createSlice({
@@ -79,6 +106,7 @@ export const authSlice = createSlice({
     builder.addCase(loginAsync.fulfilled, (state, action) => {
       state.isLoggedIn = true;
       state.token = action.payload.token;
+      state.user = action.payload.user;
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', action.payload.token);
       }
@@ -145,5 +173,7 @@ export const { reset } = authSlice.actions;
 export const isUserAuthenticated = (state: RootState) => state.auth.isLoggedIn;
 
 export const getToken = (state: RootState) => state.auth.token;
+
+export const getUser = (state: RootState) => state.auth.user;
 
 export default authSlice.reducer;

@@ -27,6 +27,14 @@ const update = async (id: string, data: Event) => {
   });
 };
 
+
+const updateByEventId = async (eventId: string, data: Event) => {
+  await EventModel.findOneAndUpdate({ id: eventId }, data, {
+    new: true,
+  });
+};
+
+
 const findMany = async (
   filter: any,
   projection: any
@@ -51,4 +59,5 @@ export default {
   update,
   findMany,
   findOneById,
+  updateByEventId,
 };

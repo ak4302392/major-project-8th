@@ -6,7 +6,19 @@ export interface Event {
   clubName: string;
   clubId: string;
   eventDate: Date;
-  registeredMembers: mongoose.Types.ObjectId[];
+  registeredMembers: string[];
+  images: string[];
+  category: string;
+}
+
+export interface EventReturn {
+  id: string;
+  name: string;
+  desc: string;
+  clubName: string;
+  clubId: string;
+  eventDate: Date;
+  registeredMembers: string[];
   images: string[];
   category: string;
 }

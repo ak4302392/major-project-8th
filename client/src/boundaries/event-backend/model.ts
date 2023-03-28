@@ -6,7 +6,23 @@ export interface CreateEventRequestPayload {
   clubName: string;
   clubId: string;
   eventDate: Date;
-  registeredMembers: mongoose.Types.ObjectId[];
+  registeredMembers: string[];
   images: string[];
   category: string;
+}
+
+export interface GetEventPayload {
+  id: string;
+  name: string;
+  desc: string;
+  clubName: string;
+  clubId: string;
+  eventDate: Date;
+  registeredMembers: string[];
+  images: string[];
+  category: string;
+}
+
+export interface CreateEventResponsePayload {
+  events: GetEventPayload[];
 }

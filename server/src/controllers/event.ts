@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
-import { OAuth2Client, TokenPayload } from "google-auth-library";
 import { UserDocument } from "@/model/user/user.schema";
-import UserRepo from "@/model/user/user.repo";
 import { createJWT } from "@/utils/jwt";
 import eventRepo from "@/model/events/event.repo";
 import clubRepo from "@/model/clubs/club.repo";
+import { getEventFromDBEvent } from "./club";
+import { EventModel } from "@/model/events/event.schema";
+import userRepo from "@/model/user/user.repo";
+import { getWebUserFromDBUser } from "./auth";
 
 const bcrypt = require("bcrypt");
 
@@ -97,8 +99,18 @@ export const createEvent = async (req: Request, res: Response) => {
       });
     }
 
+    const upComingEvents = associatedClub.upcomingEvents;
+    const events = [];
+    for (let i = 0; i < upComingEvents.length; i++) {
+      const event = await eventRepo.findOne({ id: upComingEvents[i] });
+      if (event) {
+        events.push(getEventFromDBEvent(event));
+      }
+    }
+
     return res.status(200).send({
-      message: "Event created!",
+      message: "Event created successfully",
+      events: events,
     });
   } catch (error) {
     return res.status(400).send({
@@ -113,140 +125,92 @@ export const createEvent = async (req: Request, res: Response) => {
  * @param {Request} req
  * @param {Response} res
  */
-export const login = async (req: Request, res: Response) => {
+
+export const getEventById = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  console.log(id);
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
+    const event = await eventRepo.findOne({ id: id });
+    if (!event) {
       return res.status(400).send({
-        message: "Email and password is required",
+        message: "No event exists with the provided id",
       });
     }
-    const user = await UserRepo.findOne({ email: email.toLowerCase().trim() });
-    if (!user) {
-      return res.status(400).send({
-        message: "User not present",
-      });
-    }
-
-    // Compare the provided password with the hashed password stored in the database
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).send({
-        message: "Invalid password",
-      });
-    }
-
-    if (user.email) {
-      return res.status(200).send({
-        token: getTokenFromDBUser(user),
-        user: getWebUserFromDBUser(user),
-      });
-    }
-
-    return res.status(400).send({
-      message: "Invalid user",
+    return res.status(200).send({
+      event: event,
     });
   } catch (error) {
     return res.status(400).send({
-      message: error.message ? error.message : "Request failed",
-    });
-  }
-};
-
-export const loginWithGoogle = async (req: Request, res: Response) => {
-  try {
-    const { credentials } = req.body;
-
-    if (!credentials) {
-      return res.status(400).send({
-        message: "Credentials cannot be empty!",
-      });
-    }
-
-    const data: TokenPayload = await getDecodedOAuthJwtGoogle(credentials);
-
-    const user = await UserRepo.findOne({
-      email: data.email!.toLowerCase().trim(),
-    });
-
-    if (!user) {
-      console.log(
-        "User not already present. Continuing with the data from google"
-      );
-
-      if (!data.given_name || !data.email) {
-        console.log("All required data is not present");
-
-        return res.status(200).send({
-          moreInfoNeeded: true,
-        });
-      }
-
-      const newUser = await UserRepo.create({
-        name: "",
-        email: data.email.toLowerCase().trim(),
-        // temporarily keeping below fields empty
-        // to prevent errors as for now not working on
-        // login with google
-        phone: "",
-        isManitStudent: "",
-        scholarNumber: "",
-        eventsRegistered: [],
-        password: "",
-      });
-
-      return res.status(200).send({
-        message: "User created!",
-        token: getTokenFromDBUser(newUser),
-        user: getWebUserFromDBUser(newUser),
-      });
-    } else {
-      return res.status(200).send({
-        message: "Login Successful",
-        token: getTokenFromDBUser(user),
-        user: getWebUserFromDBUser(user),
-      });
-    }
-  } catch (error) {
-    return res.status(400).send({
-      message: error.message ? error.message : "Login with google failed",
+      message: error.message ? error.message : "The event cannot be fetched",
     });
   }
 };
 
 /**
- * @description Function to decode Google OAuth token
- * @param token: string
- * @returns ticket object
+ * Login.
+ *
+ * @param {Request} req
+ * @param {Response} res
  */
-const getDecodedOAuthJwtGoogle = async (token: any) => {
-  const CLIENT_ID_GOOGLE =
-    "477624586125-v35fr087cpqhij3upbqsm4r67ngdq515.apps.googleusercontent.com";
-
-  const client = new OAuth2Client(CLIENT_ID_GOOGLE);
-
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: CLIENT_ID_GOOGLE,
-  });
-
-  return ticket.getPayload() as TokenPayload;
+export const getAllEvents = async (req: Request, res: Response) => {
+  try {
+    const events = await eventRepo.findMany({}, {});
+    return res.status(200).send({
+      events: events,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      message: error.message ? error.message : "Events cannot be fetched",
+    });
+  }
 };
 
-const getWebUserFromDBUser = (user: UserDocument) => {
-  return {
-    name: user.name,
-    email: user.email,
-    isManitStudent: user.isManitStudent,
-    id: user.id,
-  };
-};
+/**
+ * Login.
+ *
+ * @param {Request} req
+ * @param {Response} res
+ */
+export const registerEvent = async (req: Request, res: Response) => {
+  try {
+    const { eventId, userId } = req.body;
+    const event = await eventRepo.findOne({ id: eventId });
 
-const getTokenFromDBUser = (user: UserDocument) => {
-  return createJWT({
-    email: user.email,
-    name: user.name,
-    id: user.id,
-  });
+    const user = await userRepo.findOne({ id: userId });
+
+    if (user) {
+      const registeredEvents = [...user.eventsRegistered, eventId];
+      user.eventsRegistered = registeredEvents;
+      const updatedUser = await userRepo.updateByUserId(userId, {
+        ...user,
+      });
+    }
+
+    if (event) {
+      const registeredMembers = [...event.registeredMembers, userId];
+      event.registeredMembers = registeredMembers;
+      const updatedEvent = await eventRepo.updateByEventId(eventId, {
+        ...event,
+      });
+    }
+
+    const updatedUser = await userRepo.findOne({ id: userId });
+
+    return res.status(200).send({
+      message: "registered successfully to the event!",
+      user: {
+        id: updatedUser?.id ?? "",
+        name: updatedUser?.name ?? "",
+        email: updatedUser?.email ?? "",
+        isManitStudent: updatedUser?.isManitStudent ?? false,
+        phone: updatedUser?.phone ?? "",
+        eventsRegistered: updatedUser?.eventsRegistered ?? [],
+        scholarNumber: updatedUser?.scholarNumber ?? "",
+      },
+    });
+  } catch (error) {
+    return res.status(400).send({
+      message: error.message ? error.message : "Events cannot be registered",
+    });
+  }
 };

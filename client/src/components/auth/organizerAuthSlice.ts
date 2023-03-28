@@ -3,19 +3,24 @@ import { push, routerMiddleware } from 'connected-react-router';
 import { startAppListening } from '../../app/listenerMiddleware';
 import type { RootState } from '../../app/type';
 import { AppRoutes } from '../../routing/routes';
-import { Dispatch, SetStateAction } from 'react';
 import {
   club,
   OrganizerLoginRequestPayload,
   OrganizerLoginResponsePayload,
 } from '../../boundaries/club-backend/model';
 import { OrganizerLogin } from '../../boundaries/club-backend/api';
-// import { AppRoutes } from '../../routing/routes';
+import {
+  CreateEventRequestPayload,
+  CreateEventResponsePayload,
+  GetEventPayload,
+} from '../../boundaries/event-backend/model';
+import { CreateEventApi, getAllEventsAPI } from '../../boundaries/event-backend/api';
 
 export interface ClubState {
   isOrganizerLoggedIn: boolean;
   organizerToken: string;
   club: club;
+  events: GetEventPayload[];
 }
 
 const clubInitialData: club = {
@@ -34,6 +39,7 @@ const initialState: ClubState = {
     typeof window !== 'undefined' ? (localStorage.getItem('OrganizerToken') ? true : false) : false,
   organizerToken: typeof window !== 'undefined' ? localStorage.getItem('OrganizerToken') || '' : '',
   club: clubInitialData,
+  events: [],
 };
 
 export const OrganizerLoginAsync = createAsyncThunk(
@@ -42,10 +48,29 @@ export const OrganizerLoginAsync = createAsyncThunk(
     const response = await OrganizerLogin(payload);
     const data = response.data as OrganizerLoginResponsePayload;
     console.log(data);
-    window.location.assign(AppRoutes.DEFAULT);
+    window.location.assign(AppRoutes.ORGANIZER_DASHBOARD);
     return data;
   }
 );
+
+export const CreateEventAsync = createAsyncThunk(
+  'club/CreateEventAsync',
+  async (payload: CreateEventRequestPayload, thunkApi) => {
+    const response = await CreateEventApi(payload);
+    const data = response.data as CreateEventResponsePayload;
+    console.log(data);
+    window.location.assign(AppRoutes.ORGANIZER_DASHBOARD);
+    return data;
+  }
+);
+
+export const GetAllEventsAsync = createAsyncThunk('events/GetAllEventsAsync', async () => {
+  const response = await getAllEventsAPI();
+  const data = response.data as CreateEventResponsePayload;
+  console.log(data);
+  return data;
+});
+
 export const organizerLogout = createAction('club/logout');
 
 export const clubSlice = createSlice({
@@ -60,15 +85,26 @@ export const clubSlice = createSlice({
       state.organizerToken = action.payload.token;
       console.log(action.payload.club);
       state.club = action.payload.club;
+      state.events = action.payload.events;
       console.log(state.club);
       if (typeof window !== 'undefined') {
         localStorage.setItem('OrganizerToken', action.payload.token);
       }
     });
+
+    builder.addCase(CreateEventAsync.fulfilled, (state, action) => {
+      state.events = action.payload.events;
+    });
+
+    builder.addCase(GetAllEventsAsync.fulfilled, (state, action) => {
+      state.events = action.payload.events;
+    });
+
     builder.addCase(organizerLogout, (state) => {
       state.isOrganizerLoggedIn = false;
       state.organizerToken = '';
       state.club = clubInitialData;
+      state.events = [];
       if (typeof window !== 'undefined') {
         localStorage.removeItem('OrganizerToken');
       }
@@ -108,5 +144,7 @@ export const isOrganizerAuthenticated = (state: RootState) => state.club.isOrgan
 export const getOrganizerToken = (state: RootState) => state.club.organizerToken;
 
 export const getClub = (state: RootState) => state.club.club;
+
+export const getAllEvents = (state: RootState) => state.club.events;
 
 export default clubSlice.reducer;

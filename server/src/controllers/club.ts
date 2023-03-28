@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { createJWT } from "@/utils/jwt";
 import clubRepo from "@/model/clubs/club.repo";
 import { ClubDocument } from "@/model/clubs/club.schema";
+import eventRepo from "@/model/events/event.repo";
+import { EventDocument } from "@/model/events/event.schema";
 
 const bcrypt = require("bcrypt");
 
@@ -25,8 +27,8 @@ export const createClub = async (req: Request, res: Response) => {
       memories,
     } = req.body;
 
-    const orgPassword = accounts?.orgAccount?.password??"12345";
-    const cordPassword = accounts?.cordinatorAccount?.password??"12345";
+    const orgPassword = accounts?.orgAccount?.password ?? "12345";
+    const cordPassword = accounts?.cordinatorAccount?.password ?? "12345";
 
     if (!clubId) {
       return res.status(400).send({
@@ -77,12 +79,12 @@ export const createClub = async (req: Request, res: Response) => {
         message: "Club exists",
       });
     }
-    const hashedCordPassword = await bcrypt.hash(cordPassword,10);
+    const hashedCordPassword = await bcrypt.hash(cordPassword, 10);
 
     const hashedOrgPassword = await bcrypt.hash(orgPassword, 10);
 
     const newUser = await clubRepo.create({
-      clubId:clubId,
+      clubId: clubId,
       name: name,
       desc: desc,
       images: images,
@@ -91,12 +93,12 @@ export const createClub = async (req: Request, res: Response) => {
       accounts: {
         orgAccount: {
           id: accounts.orgAccount.id,
-          password:hashedOrgPassword,
+          password: hashedOrgPassword,
         },
         corAccount: {
           id: accounts.corAccount.id,
-          password:hashedCordPassword,
-        }
+          password: hashedCordPassword,
+        },
       },
       cordinatorName: cordinatorName,
       memories: memories,
@@ -155,12 +157,22 @@ export const ClubLogin = async (req: Request, res: Response) => {
       return res.status(400).send({
         message: "Invalid password",
       });
-    } else {
-      return res.status(200).send({
-        token: getTokenFromDBClub(club),
-        club: getWebUserFromDBClub(club),
-      });
     }
+    const upComingEvents = club.upcomingEvents;
+    const events = [];
+    for (let i = 0; i < upComingEvents.length; i++) {
+      const event = await eventRepo.findOne({ id: upComingEvents[i] });
+      if (event) {
+        events.push(getEventFromDBEvent(event));
+      }
+    }
+
+    return res.status(200).send({
+      message: "Club Login sucessfull!",
+      token: getTokenFromDBClub(club),
+      club: getWebUserFromDBClub(club),
+      events: events,
+    });
   } catch (error) {
     return res.status(400).send({
       message: error.message ? error.message : "Request failed",
@@ -181,6 +193,19 @@ const getWebUserFromDBClub = (club: ClubDocument) => {
   };
 };
 
+export const getEventFromDBEvent = (event: EventDocument) => {
+  return {
+    id: event.id,
+    name: event.name,
+    desc: event.desc,
+    clubName: event.clubName,
+    clubId: event.clubId,
+    eventDate: event.eventDate,
+    registeredMembers: event.registeredMembers,
+    images: event.images,
+    category: event.category,
+  };
+};
 const getTokenFromDBClub = (club: ClubDocument) => {
   return createJWT({
     email: club.accounts.orgAccount.id,

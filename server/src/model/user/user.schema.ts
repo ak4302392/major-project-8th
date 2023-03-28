@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "@/types/dto/user.dto";
+import { nanoid } from "nanoid";
 
 export interface UserOptional {
   id?: string;
@@ -17,6 +18,12 @@ export interface UserOptional {
 export interface UserDocument extends User, mongoose.Document {}
 
 const userSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    default: () => nanoid(7),
+    index: { unique: true },
+  },
   name: {
     type: String,
     required: true,
@@ -44,7 +51,7 @@ const userSchema = new mongoose.Schema({
     },
   },
   eventsRegistered: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [String],
     default: [],
   },
   createdAt: {

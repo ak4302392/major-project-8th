@@ -1,5 +1,6 @@
 import { UserModel, UserOptional } from "./user.schema";
 import { User } from "@/types/dto/user.dto";
+import { EventModel } from "../events/event.schema";
 
 const create = async (data: User) => {
   const newUser = new UserModel({
@@ -27,6 +28,12 @@ const update = async (id: string, data: User) => {
   });
 };
 
+const updateByUserId = async (userId: string, data: User) => {
+  await EventModel.findOneAndUpdate({ id: userId }, data, {
+    new: true,
+  });
+};
+
 const findMany = async (filter: any, projection: any): Promise<Array<User>> => {
   try {
     const users = await UserModel.find({ ...filter }, { ...projection });
@@ -48,4 +55,5 @@ export default {
   update,
   findMany,
   findOneById,
+  updateByUserId,
 };

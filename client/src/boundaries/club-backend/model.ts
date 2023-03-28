@@ -1,3 +1,5 @@
+import { GetEventPayload } from '../event-backend/model';
+
 export interface OrganizerLoginRequestPayload {
   clubId: string;
   email: string;
@@ -26,4 +28,5 @@ export interface club {
 export interface OrganizerLoginResponsePayload {
   token: string;
   club: club;
+  events: GetEventPayload[];
 }

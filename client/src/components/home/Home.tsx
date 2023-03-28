@@ -1,12 +1,20 @@
 import { makeStyles } from '@material-ui/styles';
-import { Box, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, Button, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 // import Carousel from 'react-material-ui-carousel';
 import EventBox, { eventBoxprops, link } from '../utils/event-box/EventBox';
 import EventOverview, { overviewBoxProps } from '../utils/event-overview/EventOverview';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import ImageCarousel from '../utils/carousel/ImageCarousel';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../app/type';
+import { getAllEvents, GetAllEventsAsync } from '../auth/organizerAuthSlice';
+import store from '../../app/state';
+import { getUser, isUserAuthenticated } from '../auth/authSlice';
+import { GetEventPayload } from '../../boundaries/event-backend/model';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { AppRoutes } from '../../routing/routes';
 
 export const images = [
   {
@@ -129,16 +137,151 @@ const useStyles = makeStyles({
 
 export const HomePage = () => {
   //temp data
-  const isLoggedIN: Boolean = false;
+  const isLoggedIN = isUserAuthenticated(store.getState());
   const classes = useStyles();
 
   const [newsToShow, setNewsToShow] = useState<link>(news.links[0]);
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const res = await dispatch(GetAllEventsAsync());
+    };
+    fetchEvents();
+  }, []);
+
+  const events = getAllEvents(store.getState());
+  console.log(events);
+
+  const [eventToShow, setEventToShow] = useState<GetEventPayload>(events[0]);
+
+  const user = getUser(store.getState());
+
   return (
     <Box mx={[1, 3, 5, 10]} mt={[3, 4, 7]}>
       <Box display='flex'>
-        <EventBox {...news} setNewsToShow={setNewsToShow} />
-        <EventOverview {...newsToShow} />
+        {/* <EventOverview {...newsToShow} /> */}
+
+        <Box width='60%' p={[0.5, 1, 2]} mr={[1, 5, 7]} sx={{ backgroundColor: '#45B3D6' }}>
+          <Box mb={[1, 2]}>
+            <Typography variant='h6' color='white' textTransform='uppercase'>
+              UPCOMING EVENTS
+            </Typography>
+          </Box>
+          <Box overflow='auto' className={classes.newsBox} height='auto'>
+            <Box display='flex' flexDirection='column'>
+              {events.map((event) => {
+                return (
+                  <a onClick={() => setEventToShow(event)} href='{item.href}'>
+                    <Typography
+                      sx={{ py: '2px' }}
+                      onMouseOver={(e) => {
+                        const target = e.target as HTMLSpanElement;
+                        target.style.color = 'black';
+                        setEventToShow(event);
+                      }}
+                      onMouseOut={(e) => {
+                        const target = e.target as HTMLSpanElement;
+                        target.style.color = 'white';
+                      }}
+                      color='white'
+                      variant='subtitle1'
+                    >
+                      {event.name}
+                    </Typography>
+                  </a>
+                );
+              })}
+            </Box>
+          </Box>
+          <Box display='flex' justifyContent='center' mt={[1, 3, 5]} gap={[2, 3, 5]}>
+            <Button
+              variant='contained'
+              color='primary'
+              sx={{
+                boxShadow:
+                  '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
+                textTransform: 'uppercase',
+              }}
+              endIcon={<ArrowForwardIosIcon />}
+              // onClick={handleViewAllEventsClick}
+              href={AppRoutes.ALL_EVENTS}
+            >
+              view all events
+            </Button>
+          </Box>
+        </Box>
+        {/* the event overview */}
+        <Box
+          p={[0.5, 1, 2]}
+          sx={{ backgroundColor: '#45B3D6', width: '40%' }}
+          display='flex'
+          alignItems='center'
+          flexDirection='column'
+          mb={[0]}
+        >
+          <Box mb={[1, 2]}>
+            <a href='{href}'>
+              <Typography variant='h6' color='white' textTransform='uppercase'>
+                {eventToShow.name}
+              </Typography>
+            </a>
+          </Box>
+          <Box sx={{ height: '10rem', width: '16rem' }}>
+            <img src={eventToShow.images[0]} />
+          </Box>
+          <Box
+            height='100px'
+            overflow='auto'
+            px={[1, 2, 3]}
+            mt={[2, 4]}
+            className={classes.invisibleScrollBar}
+          >
+            <Typography color='white' variant='subtitle1'>
+              {eventToShow.desc}
+            </Typography>
+          </Box>
+
+          {isLoggedIN ? (
+            <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
+              <Button
+                variant='contained'
+                color='primary'
+                // href={button?.href}
+                sx={{
+                  boxShadow:
+                    '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
+                  textTransform: 'uppercase',
+                }}
+                href={
+                  eventToShow.registeredMembers.includes(user.id)
+                    ? AppRoutes.EVENT
+                    : AppRoutes.EVENT_DETAILS
+                }
+              >
+                {eventToShow.registeredMembers.includes(user.id)
+                  ? 'De-register'
+                  : 'See Details to register'}
+              </Button>
+            </Box>
+          ) : (
+            <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
+              <Button
+                variant='contained'
+                color='primary'
+                sx={{
+                  boxShadow:
+                    '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
+                  textTransform: 'uppercase',
+                }}
+                href={AppRoutes.LOGIN}
+              >
+                Login to register
+              </Button>
+            </Box>
+          )}
+        </Box>
       </Box>
 
       <Box display='flex' flexDirection='column'>

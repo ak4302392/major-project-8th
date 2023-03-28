@@ -4,12 +4,13 @@ import { SettingsConsumer, SettingsProvider } from './contexts/settings-context'
 import './styles/globals.css';
 import { createTheme } from './theme';
 import { ThemeProvider } from '@mui/system';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import AppRouter from './routing/AppRouter';
 import IndeterminateLoader from './components/core/loader/IndeterminateLoader';
 import CustomizedSnackbars from './components/core/alert/alert';
 import { PersistGate } from 'redux-persist/integration/react';
-
+import { AppDispatch } from './app/type';
+import { getAllEvents, GetAllEventsAsync } from './components/auth/organizerAuthSlice';
 
 export default function App() {
   return (

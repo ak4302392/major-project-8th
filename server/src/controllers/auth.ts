@@ -3,6 +3,7 @@ import { OAuth2Client, TokenPayload } from "google-auth-library";
 import { UserDocument } from "@/model/user/user.schema";
 import UserRepo from "@/model/user/user.repo";
 import { createJWT } from "@/utils/jwt";
+import { getAllEvents } from "./event";
 
 const bcrypt = require("bcrypt");
 
@@ -123,6 +124,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (user.email) {
       return res.status(200).send({
+        message: "Login successfull!",
         token: getTokenFromDBUser(user),
         user: getWebUserFromDBUser(user),
       });
@@ -218,16 +220,19 @@ const getDecodedOAuthJwtGoogle = async (token: any) => {
   return ticket.getPayload() as TokenPayload;
 };
 
-const getWebUserFromDBUser = (user: UserDocument) => {
+export const getWebUserFromDBUser = (user: UserDocument) => {
   return {
+    id: user.id,
     name: user.name,
     email: user.email,
     isManitStudent: user.isManitStudent,
-    id: user.id,
+    phone: user.phone,
+    eventsRegistered: user.eventsRegistered,
+    scholarNumber: user.scholarNumber,
   };
 };
 
-const getTokenFromDBUser = (user: UserDocument) => {
+export const getTokenFromDBUser = (user: UserDocument) => {
   return createJWT({
     email: user.email,
     name: user.name,

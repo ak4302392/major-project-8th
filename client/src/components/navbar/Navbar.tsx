@@ -17,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import store from '../../app/state';
 import { isOrganizerAuthenticated, organizerLogout } from '../auth/organizerAuthSlice';
+import { AppRoutes } from '../../routing/routes';
 
 const useStyles = makeStyles((theme) => {});
 
@@ -202,7 +203,7 @@ export const Navbar = () => {
 
         {isOrganizerLoggedIn && (
           <Box display='flex' gap={1}>
-            <Button variant='contained' href='/organizer/dashboard' color='primary'>
+            <Button variant='contained' href={AppRoutes.CLUB_DETAILS} color='primary'>
               CLUB PROFILE
             </Button>
             <Button variant='contained' onClick={handleOrganizerLogout} color='error'>
