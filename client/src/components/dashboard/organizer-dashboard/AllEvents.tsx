@@ -9,6 +9,7 @@ import store from '../../../app/state';
 import { GetEventPayload } from '../../../boundaries/event-backend/model';
 import { AppRoutes } from '../../../routing/routes';
 import { Link } from 'react-router-dom';
+import { formatDate } from '../../evnt/CreateEvent';
 
 const BlogPostCardMediaWrapper = styled('div')({
   paddingTop: 'calc(100% * 4 / 4)',
@@ -17,6 +18,7 @@ const BlogPostCardMediaWrapper = styled('div')({
 
 export const AllEvents = () => {
   const events = getAllEvents(store.getState());
+  console.log(events);
 
   return (
     <Box
@@ -28,7 +30,7 @@ export const AllEvents = () => {
       <Grid container spacing={3}>
         {events.map((event: GetEventPayload) => (
           <Grid item mb={[2, 4]} md={4} xs={12}>
-            <a href={AppRoutes.EVENT}>
+            <Link to={AppRoutes.EVENT_DETAILS} state={{ event: event }}>
               <Card
                 sx={{
                   height: '100%',
@@ -74,9 +76,9 @@ export const AllEvents = () => {
                   <div>
                     <Chip label={event.category} variant='outlined' />
                   </div>
-                  <Link to={AppRoutes.EVENT_DETAILS} state={{ event: event }}>
+                  <Typography sx={{ marginTop: '10px' }} variant='h6' color='primary'>
                     {event.name}
-                  </Link>
+                  </Typography>
                   <Typography
                     color='textSecondary'
                     sx={{
@@ -101,19 +103,23 @@ export const AllEvents = () => {
                     justifyContent='flex-start'
                   >
                     <Typography variant='subtitle2' sx={{ fontWeight: 'bold' }}>
-                      Date: 04/04/2022
+                      Date: {formatDate(event.eventDate)}
                     </Typography>
                   </Box>
                   <Box mt={[2]}>
                     <Button type='submit' variant='contained'>
-                      <Link to={AppRoutes.EVENT_DETAILS} state={{ event: event }}>
+                      <Link
+                        style={{ color: 'white' }}
+                        to={AppRoutes.EVENT_DETAILS}
+                        state={{ event: event }}
+                      >
                         See Details
                       </Link>
                     </Button>
                   </Box>
                 </Box>
               </Card>
-            </a>
+            </Link>
           </Grid>
         ))}
       </Grid>

@@ -15,6 +15,7 @@ import { getUser, isUserAuthenticated } from '../auth/authSlice';
 import { GetEventPayload } from '../../boundaries/event-backend/model';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { AppRoutes } from '../../routing/routes';
+import axios from 'axios';
 
 export const images = [
   {
@@ -140,19 +141,28 @@ export const HomePage = () => {
   const isLoggedIN = isUserAuthenticated(store.getState());
   const classes = useStyles();
 
-  const [newsToShow, setNewsToShow] = useState<link>(news.links[0]);
-
   const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const res = await dispatch(GetAllEventsAsync());
-    };
-    fetchEvents();
-  }, []);
+  const [events, setEvents] = useState<GetEventPayload[]>([]);
 
-  const events = getAllEvents(store.getState());
-  console.log(events);
+  useEffect(() => {
+    // console.log("ehllo there")
+    // const fetchEvents = async () => {
+    //   const res = await dispatch(GetAllEventsAsync());
+    // };
+    // fetchEvents();
+
+    axios
+      .get('http://localhost:4001/api/v1/events/getAllEvents')
+      .then((response) => {
+        setEvents(response.data);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    console.log('hello there');
+  }, []);
 
   const [eventToShow, setEventToShow] = useState<GetEventPayload>(events[0]);
 

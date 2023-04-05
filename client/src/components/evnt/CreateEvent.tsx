@@ -1,38 +1,88 @@
-import { FC, useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Grid,
-  Link,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { DatePicker, MobileDatePicker, StaticDatePicker } from '@mui/x-date-pickers';
+import { ChangeEvent, FC, useState } from 'react';
+import { Box, Button, Card, CardContent, Container, TextField, Typography } from '@mui/material';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateEventAsync, getClub, OrganizerLoginAsync } from '../auth/organizerAuthSlice';
 import store from '../../app/state';
 import { AppDispatch } from '../../app/type';
-import { useField, useFormikContext } from 'formik';
-
+import { DatePicker } from 'react-responsive-datepicker';
+import 'react-responsive-datepicker/dist/index.css';
+import { storage } from '../../firebase';
 // import { DateTimePicker } from '@mui/x-date-pickers';
 
-export const CreateEvent: React.FC<{}> = (props) => {
-  const [eventDate, setEventDate] = useState<Date | null>(new Date());
+export function formatDate(date: Date) {
+  var d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
 
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+}
+
+export const CreateEvent: React.FC<{}> = (props) => {
   const clubData = getClub(store.getState());
 
   const dispatch = useDispatch<AppDispatch>();
+  //things to upload images of the event
+  const [images, setImages] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [progress, setProgress] = useState(0);
 
-  // const { setFieldValue } = useFormikContext();
-  // // const [field] = useField(props);
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target?.files;
+    console.log(files);
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const newImage = files[i];
+        setImages((prevState) => [...prevState, newImage]);
+      }
+    }
+  };
+
+  const handleImageUpload = () => {
+    if (!images) return;
+
+    const promises: any[] = [];
+
+    images.map((image: File) => {
+      const uploadTask = storage.ref(`images/${image.name}`).put(image);
+      promises.push(uploadTask);
+      uploadTask.on(
+        'state_changed',
+        (snapshot: any) => {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          setProgress(progress);
+        },
+        (error: any) => {
+          console.log(error);
+        },
+        async () => {
+          await storage
+            .ref('images')
+            .child(image.name)
+            .getDownloadURL()
+            .then((urls) => {
+              setImageUrls((prevState) => [...prevState, urls]);
+              console.log('urls', imageUrls);
+            });
+        }
+      );
+    });
+
+    Promise.all(promises)
+      .then(() => alert('All images uploaded'))
+      .catch((err) => console.log(err));
+  };
+
+  //event date handling
+  const [eventDate, setEventDate] = useState<Date>(new Date());
+
+  //error message
+  const [errMsg, setErrMsg] = useState('');
 
   const formik = useFormik({
     initialValues: {
@@ -41,26 +91,34 @@ export const CreateEvent: React.FC<{}> = (props) => {
       clubName: clubData.name,
       clubId: clubData.clubId,
       registeredMembers: [],
-      eventDate: null,
-      images: [],
+      eventDate: eventDate,
+      images: imageUrls,
       category: '',
     },
     validationSchema: Yup.object({
       name: Yup.string().max(255).required('Event name is required'),
       desc: Yup.string().min(200).max(2000).required('Event short description is required'),
       category: Yup.string().max(50).required('Event category is required'),
-      images: Yup.object().required('Images are required'),
-      eventDate: Yup.date().required('Date is required'),
+      // images: Yup.object().required('Images are required'),
+      // eventDate: Yup.date().required('Date is required'),
     }),
     onSubmit: async (values, helpers): Promise<void> => {
       try {
-        console.log(values);
-        // await dispatch(CreateEventAsync());
+        values.eventDate = eventDate;
+        values.images = imageUrls;
+        if (values.images.length === 0) {
+          setErrMsg('Please select images for the event');
+        } else {
+          console.log(values);
+          await dispatch(CreateEventAsync(values));
+        }
       } catch (err: any) {
         console.log(err);
       }
     },
   });
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Box
@@ -122,10 +180,40 @@ export const CreateEvent: React.FC<{}> = (props) => {
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                 />
-                {/* <MobileDatePicker label='Start Date' renderInput={<TextField />} /> */}
-                {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker renderInput={(params: any) => <TextField {...params} />} />
-                </LocalizationProvider> */}
+
+                <Box
+                  display='flex'
+                  justifyContent='space-between'
+                  margin='normal'
+                  alignItems='center'
+                  zIndex={10}
+                  sx={{ position: 'relative' }}
+                >
+                  <Button
+                    onClick={() => {
+                      setIsOpen(true);
+                    }}
+                    variant='contained'
+                  >
+                    Select Event Date
+                  </Button>
+                  <Box>
+                    <DatePicker
+                      isOpen={isOpen}
+                      onClose={() => setIsOpen(false)}
+                      minDate={new Date(2022, 10, 10)}
+                      maxDate={new Date(2050, 0, 10)}
+                      headerFormat='DD, MM dd'
+                      onChange={(date: Date | null) => {
+                        setEventDate(date ?? new Date());
+                      }}
+                      showTitle={false}
+                    />
+                  </Box>
+                  <Typography variant='subtitle2' fontWeight='bold' fontSize={20}>
+                    {formatDate(eventDate)}
+                  </Typography>
+                </Box>
 
                 <TextField
                   fullWidth
@@ -144,17 +232,27 @@ export const CreateEvent: React.FC<{}> = (props) => {
 
                 <Box my={[1, 2]}>
                   <Typography mb={[1]}>Select images for the event</Typography>
-                  <input
-                    // error={Boolean(formik.touched.images && formik.errors.images)}
-                    // helperText={formik.touched.images && formik.errors.images}
-                    name='images'
-                    type='file'
-                    accept='image/png, image/gif, image/jpeg'
-                    multiple={true}
-                    value={formik.values.images}
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                  />
+                  <Box display='flex' flexWrap='wrap' justifyContent='space-between'>
+                    <input
+                      // error={Boolean(formik.touched.images && formik.errors.images)}
+                      // helperText={formik.touched.images && formik.errors.images}
+                      name='images'
+                      type='file'
+                      accept='image/png, image/gif, image/jpeg'
+                      multiple={true}
+                      onBlur={formik.handleBlur}
+                      onChange={handleImageChange}
+                    />
+                    <progress value={progress} max='100' />
+                    <Button size='small' variant='contained' onClick={handleImageUpload}>
+                      Upload
+                    </Button>
+                  </Box>
+                </Box>
+                <Box margin='normal'>
+                  <Typography variant='subtitle2' color='error'>
+                    {errMsg}
+                  </Typography>
                 </Box>
                 <Box sx={{ mt: 2 }}>
                   <Button fullWidth size='large' type='submit' variant='contained'>

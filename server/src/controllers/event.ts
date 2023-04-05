@@ -155,6 +155,7 @@ export const getEventById = async (req: Request, res: Response) => {
 export const getAllEvents = async (req: Request, res: Response) => {
   try {
     const events = await eventRepo.findMany({}, {});
+    console.log(events);
     return res.status(200).send({
       events: events,
     });

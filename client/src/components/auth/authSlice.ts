@@ -48,7 +48,7 @@ export const loginAsync = createAsyncThunk(
   async (payload: LoginRequestPayload, thunkApi) => {
     const response = await login(payload);
     const data = response.data as LoginResponsePayload;
-    window.location.assign(AppRoutes.DEFAULT);
+    window.location.assign(AppRoutes.USER_DASHBOARD);
     return data;
   }
 );
