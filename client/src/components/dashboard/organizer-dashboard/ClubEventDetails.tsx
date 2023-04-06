@@ -11,15 +11,20 @@ import { images } from '../../home/Home';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { AppRoutes } from '../../../routing/routes';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router';
+import { formatDate } from '../../evnt/CreateEvent';
+import { getUser, isUserAuthenticated } from '../../auth/authSlice';
 
 const BlogPostCardMediaWrapper = styled('div')({
   paddingTop: 'calc(100% * 4 / 4)',
   position: 'relative',
 });
 
-export const ClubDashboard = () => {
-  const clubData = getClub(store.getState());
-  console.log(clubData.desc);
+export const ClubEventDetails = () => {
+  const location = useLocation();
+  const { event } = location.state;
+  console.log(event);
+
   return (
     <Box
       mx={[1, 5, 10]}
@@ -31,32 +36,46 @@ export const ClubDashboard = () => {
       <Box display='flex' flexDirection='column'>
         <Box display='flex' justifyContent='center'>
           <Typography variant='h5' sx={{ color: 'white' }} textTransform='uppercase'>
-            {clubData.name}
+            {event.name}
           </Typography>
         </Box>
         <Box mt={[1, 3]} display='flex' gap={2} flexWrap='wrap'>
           <Box flexBasis={['100%', '100%', '70%']} order={[2, 1]}>
-            <Typography variant='h6' sx={{ color: 'white' }} textTransform='uppercase'>
-              Club Overview
-            </Typography>
+            <Typography variant='h6' sx={{ color: 'white' }} textTransform='uppercase'></Typography>
             <Box mr={[2, 3]} mt={[2, 3]}>
               <Typography variant='body1' sx={{ color: 'white' }}>
-                {clubData.desc}
+                {event.desc}
               </Typography>
             </Box>
             <Box mt={[2, 3]} display='flex' flexDirection='column' justifyContent='flex-start'>
               <Box display='flex' gap={2}>
                 <Typography variant='subtitle2' sx={{ fontsize: '2rem', fontWeight: 'bold' }}>
-                  Faculty Cordinator:
+                  Event Date:
                 </Typography>
-                <Typography>{clubData.cordinatorName}</Typography>
+                <Typography
+                  variant='subtitle2'
+                  fontSize={16}
+                  fontWeight={600}
+                  sx={{ color: 'white' }}
+                >
+                  {formatDate(event.eventDate)}
+                </Typography>
               </Box>
               <Box display='flex' gap={2}>
                 <Typography variant='subtitle2' sx={{ fontsize: '2rem', fontWeight: 'bold' }}>
-                  Co-cordinator:
+                  Number of registered members:
                 </Typography>
-                <Typography variant='body2'>{clubData.cordinatorName}</Typography>
+                <Typography
+                  variant='subtitle2'
+                  fontSize={16}
+                  fontWeight={600}
+                  sx={{ color: 'white' }}
+                >
+                  {event.registeredMembers.length}
+                </Typography>
               </Box>
+
+              {/* buttons */}
               <Box display='flex' justifyContent='center' mt={[1, 3, 5]} gap={[2, 3, 5]}>
                 <Button
                   variant='contained'
@@ -68,35 +87,9 @@ export const ClubDashboard = () => {
                   }}
                   endIcon={<ArrowForwardIosIcon />}
                   // onClick={handleViewAllEventsClick}
-                  href={AppRoutes.CLUB_ALL_EVENTS}
+                  href={AppRoutes.USER_ALL_EVENTS}
                 >
                   view all events
-                </Button>
-                <Button
-                  variant='contained'
-                  color='secondary'
-                  sx={{
-                    boxShadow:
-                      '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
-                    textTransform: 'uppercase',
-                  }}
-                  endIcon={<ArrowForwardIosIcon />}
-                  href={AppRoutes.CREATE_EVENT}
-                >
-                  create event
-                </Button>
-                <Button
-                  variant='contained'
-                  color='secondary'
-                  sx={{
-                    boxShadow:
-                      '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
-                    textTransform: 'uppercase',
-                  }}
-                  endIcon={<ArrowForwardIosIcon />}
-                  href={AppRoutes.ORGANIZER_DASHBOARD}
-                >
-                  events dashboard
                 </Button>
               </Box>
             </Box>
@@ -130,7 +123,7 @@ export const ClubDashboard = () => {
                 removeArrowOnDeviceType={['desktop', 'tablet', 'mobile']}
                 autoPlaySpeed={1000}
               >
-                {clubData.images.map((img) => {
+                {event.images.map((img: string) => {
                   return <img src={img} style={{ height: '25rem', paddingBottom: '1rem' }}></img>;
                 })}
               </Carousel>

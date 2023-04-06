@@ -8,7 +8,12 @@ export const getAllEventsAPI = async () =>
   axios.get('http://localhost:4001/api/v1/events/getAllEvents');
 
 export const registerToEvent = async (payload: { userId: string; eventId: string }) => {
-  axios.post('http://localhost:4001/api/v1/events/register', payload);
+  return axios.post('http://localhost:4001/api/v1/events/register', payload);
 };
+
+export const getEventById = async (payload: { id: string }) => {
+  return axios.post('http://localhost:4001/api/v1/events/getEventByEventId', payload);
+};
+
 // const googleLogin = async (payload: GoogleLoginRequest) =>
 //   axios.post('http://localhost:4001/api/v1/club/create', payload);

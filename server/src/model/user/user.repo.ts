@@ -29,7 +29,7 @@ const update = async (id: string, data: User) => {
 };
 
 const updateByUserId = async (userId: string, data: User) => {
-  await EventModel.findOneAndUpdate({ id: userId }, data, {
+  await UserModel.findOneAndUpdate({ id: userId }, data, {
     new: true,
   });
 };

@@ -11,13 +11,15 @@ import {
   RegisterRequestPayload,
   UserData,
 } from '../../boundaries/ad-lnx-backend/auth/model';
-import { registerToEvent } from '../../boundaries/event-backend/api';
+import { getEventById, registerToEvent } from '../../boundaries/event-backend/api';
+import { GetEventPayload } from '../../boundaries/event-backend/model';
 // import { AppRoutes } from '../../routing/routes';
 
 export interface AuthState {
   isLoggedIn: boolean;
   token: string;
   error: string | null;
+  registeredEvents: GetEventPayload[];
   user: UserData;
 }
 
@@ -35,6 +37,7 @@ const initialState: AuthState = {
     eventsRegistered: [],
     id: '',
   },
+  registeredEvents: [],
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -48,7 +51,7 @@ export const loginAsync = createAsyncThunk(
   async (payload: LoginRequestPayload, thunkApi) => {
     const response = await login(payload);
     const data = response.data as LoginResponsePayload;
-    window.location.assign(AppRoutes.USER_DASHBOARD);
+    window.location.assign(AppRoutes.DEFAULT);
     return data;
   }
 );
@@ -78,21 +81,51 @@ export const registerAsync = createAsyncThunk(
   }
 );
 
+export const getAllRegisteredEventsAsync = createAsyncThunk(
+  'auth/getAllRegisteredEventsAsync',
+  async (
+    payload: {
+      eventsArray: string[];
+    },
+    thunkApi
+  ) => {
+    try {
+      const events = [];
+      for (const id of payload.eventsArray) {
+        const response = await getEventById({ id });
+        const data = response.data.event;
+        events.push(data);
+      }
+      // return events;
+      // const response = await registerToEvent(payload);
+      // const data = response;
+      // window.location.assign(AppRoutes.DEFAULT);
+      return events;
+    } catch (err: any) {
+      throw err;
+    }
+  }
+);
+
 export const registerEventAsync = createAsyncThunk(
   'auth/registerEventAsync',
-  async (payload: {
-    userId:string,eventId:string
-  }, thunkApi) => {
+  async (
+    payload: {
+      userId: string;
+      eventId: string;
+    },
+    thunkApi
+  ) => {
     try {
       const response = await registerToEvent(payload);
-      const data=response
-      window.location.assign(AppRoutes.DEFAULT);
+      const data = response.data;
+      // window.location.assign(AppRoutes.DEFAULT);
       return data;
     } catch (err: any) {
       throw err;
     }
   }
-)
+);
 
 export const logout = createAction('auth/logout');
 
@@ -122,6 +155,12 @@ export const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', action.payload.token);
       }
+    });
+    builder.addCase(registerEventAsync.fulfilled, (state, action) => {
+      state.user = action.payload.user;
+    });
+    builder.addCase(getAllRegisteredEventsAsync.fulfilled, (state, action) => {
+      state.registeredEvents = action.payload;
     });
     builder.addCase(logout, (state) => {
       state.isLoggedIn = false;
@@ -175,5 +214,7 @@ export const isUserAuthenticated = (state: RootState) => state.auth.isLoggedIn;
 export const getToken = (state: RootState) => state.auth.token;
 
 export const getUser = (state: RootState) => state.auth.user;
+
+export const getRegisteredEvents = (state: RootState) => state.auth.registeredEvents;
 
 export default authSlice.reducer;

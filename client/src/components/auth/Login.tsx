@@ -121,7 +121,7 @@ const Login: FC = (props) => {
             </Box>
             <Divider sx={{ my: 3 }} />
             <Box display='flex' justifyContent='space-between'>
-              <Link color='textSecondary' href='#' variant='body2'>
+              <Link color='textSecondary' href={AppRoutes.SIGNUP} variant='body2'>
                 Create new account
               </Link>
               <Link color='textSecondary' variant='body2' href={AppRoutes.ORGANIGER_LOGIN}>

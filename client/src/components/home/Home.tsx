@@ -16,6 +16,7 @@ import { GetEventPayload } from '../../boundaries/event-backend/model';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { AppRoutes } from '../../routing/routes';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export const images = [
   {
@@ -143,26 +144,18 @@ export const HomePage = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [events, setEvents] = useState<GetEventPayload[]>([]);
+  // const [events, setEvents] = useState<GetEventPayload[]>([]);
 
   useEffect(() => {
-    // console.log("ehllo there")
-    // const fetchEvents = async () => {
-    //   const res = await dispatch(GetAllEventsAsync());
-    // };
-    // fetchEvents();
-
-    axios
-      .get('http://localhost:4001/api/v1/events/getAllEvents')
-      .then((response) => {
-        setEvents(response.data);
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    console.log('hello there');
+    async function fetchEvents() {
+      await dispatch(GetAllEventsAsync());
+    }
+    fetchEvents();
   }, []);
+
+  const events = getAllEvents(store.getState());
+
+  console.log('events', events);
 
   const [eventToShow, setEventToShow] = useState<GetEventPayload>(events[0]);
 
@@ -172,7 +165,6 @@ export const HomePage = () => {
     <Box mx={[1, 3, 5, 10]} mt={[3, 4, 7]}>
       <Box display='flex'>
         {/* <EventOverview {...newsToShow} /> */}
-
         <Box width='60%' p={[0.5, 1, 2]} mr={[1, 5, 7]} sx={{ backgroundColor: '#45B3D6' }}>
           <Box mb={[1, 2]}>
             <Typography variant='h6' color='white' textTransform='uppercase'>
@@ -181,28 +173,32 @@ export const HomePage = () => {
           </Box>
           <Box overflow='auto' className={classes.newsBox} height='auto'>
             <Box display='flex' flexDirection='column'>
-              {events.map((event) => {
-                return (
-                  <a onClick={() => setEventToShow(event)} href='{item.href}'>
-                    <Typography
-                      sx={{ py: '2px' }}
-                      onMouseOver={(e) => {
-                        const target = e.target as HTMLSpanElement;
-                        target.style.color = 'black';
-                        setEventToShow(event);
-                      }}
-                      onMouseOut={(e) => {
-                        const target = e.target as HTMLSpanElement;
-                        target.style.color = 'white';
-                      }}
-                      color='white'
-                      variant='subtitle1'
-                    >
-                      {event.name}
-                    </Typography>
-                  </a>
-                );
-              })}
+              {events ? (
+                events.map((event) => {
+                  return (
+                    <Button onClick={() => setEventToShow(event)}>
+                      <Typography
+                        sx={{ py: '2px' }}
+                        onMouseOver={(e) => {
+                          const target = e.target as HTMLSpanElement;
+                          target.style.color = 'black';
+                          setEventToShow(event);
+                        }}
+                        onMouseOut={(e) => {
+                          const target = e.target as HTMLSpanElement;
+                          target.style.color = 'white';
+                        }}
+                        color='white'
+                        variant='subtitle1'
+                      >
+                        {event.name}
+                      </Typography>
+                    </Button>
+                  );
+                })
+              ) : (
+                <Typography>No upcoming events</Typography>
+              )}
             </Box>
           </Box>
           <Box display='flex' justifyContent='center' mt={[1, 3, 5]} gap={[2, 3, 5]}>
@@ -215,83 +211,85 @@ export const HomePage = () => {
                 textTransform: 'uppercase',
               }}
               endIcon={<ArrowForwardIosIcon />}
-              // onClick={handleViewAllEventsClick}
-              href={AppRoutes.ALL_EVENTS}
+              href={AppRoutes.USER_ALL_EVENTS}
             >
               view all events
             </Button>
           </Box>
         </Box>
         {/* the event overview */}
-        <Box
-          p={[0.5, 1, 2]}
-          sx={{ backgroundColor: '#45B3D6', width: '40%' }}
-          display='flex'
-          alignItems='center'
-          flexDirection='column'
-          mb={[0]}
-        >
-          <Box mb={[1, 2]}>
-            <a href='{href}'>
-              <Typography variant='h6' color='white' textTransform='uppercase'>
-                {eventToShow.name}
-              </Typography>
-            </a>
-          </Box>
-          <Box sx={{ height: '10rem', width: '16rem' }}>
-            <img src={eventToShow.images[0]} />
-          </Box>
+        {eventToShow ? (
           <Box
-            height='100px'
-            overflow='auto'
-            px={[1, 2, 3]}
-            mt={[2, 4]}
-            className={classes.invisibleScrollBar}
+            p={[0.5, 1, 2]}
+            sx={{ backgroundColor: '#45B3D6', width: '40%' }}
+            display='flex'
+            alignItems='center'
+            flexDirection='column'
+            mb={[0]}
           >
-            <Typography color='white' variant='subtitle1'>
-              {eventToShow.desc}
-            </Typography>
-          </Box>
+            <Box mb={[1, 2]}>
+              <a href='{href}'>
+                <Typography variant='h6' color='white' textTransform='uppercase'>
+                  {eventToShow.name}
+                </Typography>
+              </a>
+            </Box>
+            <Box sx={{ height: '10rem', width: '16rem' }}>
+              <img src={eventToShow.images[0]} />
+            </Box>
+            <Box
+              height='100px'
+              overflow='auto'
+              px={[1, 2, 3]}
+              mt={[2, 4]}
+              className={classes.invisibleScrollBar}
+            >
+              <Typography color='white' variant='subtitle1'>
+                {eventToShow.desc}
+              </Typography>
+            </Box>
 
-          {isLoggedIN ? (
-            <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
-              <Button
-                variant='contained'
-                color='primary'
-                // href={button?.href}
-                sx={{
-                  boxShadow:
-                    '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
-                  textTransform: 'uppercase',
-                }}
-                href={
-                  eventToShow.registeredMembers.includes(user.id)
-                    ? AppRoutes.EVENT
-                    : AppRoutes.EVENT_DETAILS
-                }
-              >
-                {eventToShow.registeredMembers.includes(user.id)
-                  ? 'De-register'
-                  : 'See Details to register'}
-              </Button>
-            </Box>
-          ) : (
-            <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
-              <Button
-                variant='contained'
-                color='primary'
-                sx={{
-                  boxShadow:
-                    '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
-                  textTransform: 'uppercase',
-                }}
-                href={AppRoutes.LOGIN}
-              >
-                Login to register
-              </Button>
-            </Box>
-          )}
-        </Box>
+            {isLoggedIN ? (
+              <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  // href={button?.href}
+                  sx={{
+                    boxShadow:
+                      '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  <Link
+                    style={{ color: 'white' }}
+                    to={AppRoutes.USER_EVENT_DETAILS}
+                    state={{ event: eventToShow }}
+                  >
+                    See details to register
+                  </Link>
+                </Button>
+              </Box>
+            ) : (
+              <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  sx={{
+                    boxShadow:
+                      '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
+                    textTransform: 'uppercase',
+                  }}
+                  href={AppRoutes.LOGIN}
+                >
+                  Login to register
+                </Button>
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <></>
+        )}
       </Box>
 
       <Box display='flex' flexDirection='column'>

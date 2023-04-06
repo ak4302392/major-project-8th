@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { format, subHours, subMinutes, subSeconds } from 'date-fns';
 import { Box, Card, CardMedia, Chip, Grid, Typography, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -10,15 +10,55 @@ import { GetEventPayload } from '../../../boundaries/event-backend/model';
 import { AppRoutes } from '../../../routing/routes';
 import { Link } from 'react-router-dom';
 import { formatDate } from '../../evnt/CreateEvent';
+import { getUser, isUserAuthenticated, registerEventAsync } from '../../auth/authSlice';
+import Swal from 'sweetalert2';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../../app/type';
+import { UserData } from '../../../boundaries/ad-lnx-backend/auth/model';
 
 const BlogPostCardMediaWrapper = styled('div')({
   paddingTop: 'calc(100% * 4 / 4)',
   position: 'relative',
 });
 
-export const AllEvents = () => {
+export const UserAllEvents = () => {
   const events = getAllEvents(store.getState());
-  console.log(events);
+
+  const isLoggedIn = isUserAuthenticated(store.getState());
+
+  const [user, setUser] = useState(getUser(store.getState()));
+
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {
+      const updatedUser = getUser(store.getState());
+      setUser(updatedUser);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleRegisterClick = (eventId: string) => {
+    Swal.fire({
+      title: 'Are you sure, you want to register to the event?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, register!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await dispatch(registerEventAsync({ userId: user.id, eventId: eventId }));
+          Swal.fire('Registered!', 'You have successfully to the event', 'success');
+        } catch (err) {
+          console.log('the error is ', err);
+        }
+      }
+    });
+  };
 
   return (
     <Box
@@ -30,7 +70,7 @@ export const AllEvents = () => {
       <Grid container spacing={3}>
         {events.map((event: GetEventPayload) => (
           <Grid item mb={[2, 4]} md={4} xs={12}>
-            <Link to={AppRoutes.EVENT_DETAILS} state={{ event: event }}>
+            <Link to={AppRoutes.USER_EVENT_DETAILS} state={{ event: event }}>
               <Card
                 sx={{
                   height: '100%',
@@ -107,15 +147,26 @@ export const AllEvents = () => {
                     </Typography>
                   </Box>
                   <Box mt={[2]}>
-                    <Button type='submit' variant='contained'>
-                      <Link
-                        style={{ color: 'white' }}
-                        to={AppRoutes.EVENT_DETAILS}
-                        state={{ event: event }}
-                      >
-                        See Details
-                      </Link>
-                    </Button>
+                    {isLoggedIn ? (
+                      user.eventsRegistered.includes(event.id) ? (
+                        <Button type='submit' color='primary' variant='contained' disabled>
+                          Registered!
+                        </Button>
+                      ) : (
+                        <Button
+                          type='submit'
+                          variant='contained'
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleRegisterClick(event.id);
+                          }}
+                        >
+                          Register
+                        </Button>
+                      )
+                    ) : (
+                      <></>
+                    )}
                   </Box>
                 </Box>
               </Card>

@@ -7,15 +7,21 @@ export enum AppRoutes {
 
   EVENT = '/evnts/event',
   EVENTS = '/evnts',
-  EVENT_DETAILS='/events/event-details',
+  EVENT_DETAILS = '/events/event-details',
 
-  ALL_EVENTS="/events/all-events",
-
+  //user routes
   USER_DASHBOARD = '/user/dashboard',
+  USER_ALL_EVENTS = '/user/all-events',
+  USER_EVENT_DETAILS = '/user/event-details',
+
+  //organizer routes
   ORGANIZER_DASHBOARD = '/organizer/dashboard',
   CLUB_DETAILS = '/club',
+  CLUB_EVENT_DETAILS="/club/event-details",
   CREATE_EVENT = '/evnts/event/create',
   UPDATE_EVENT = '/evnts/event/update',
+  ALL_EVENTS = '/events/all-events',
+  CLUB_ALL_EVENTS="/club/all-events",
 
   ABOUT = '/about',
   TESTIMONIALS = '/testimonial',

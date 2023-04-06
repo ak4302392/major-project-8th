@@ -10,7 +10,7 @@ export interface UserOptional {
   password?: string;
   isManitStudent?: string;
   scholarNumber?: string;
-  eventsRegistered?:[],
+  eventsRegistered?:string[],
   createdAt?: Date;
   modifiedAt?: Date;
 }

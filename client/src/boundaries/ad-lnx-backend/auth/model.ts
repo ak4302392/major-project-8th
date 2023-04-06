@@ -13,7 +13,7 @@ export interface LoginResponsePayload {
     phone: string;
     isManitStudent: Boolean;
     scholarNumber: string;
-    eventsRegistered: [];
+    eventsRegistered: string[];
     id: string;
   };
   events: GetEventPayload[];
@@ -39,6 +39,6 @@ export interface UserData {
   phone: string;
   isManitStudent: Boolean;
   scholarNumber: string;
-  eventsRegistered: [];
+  eventsRegistered: string[];
   id: string;
 }

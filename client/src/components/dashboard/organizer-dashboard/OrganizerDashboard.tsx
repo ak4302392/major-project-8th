@@ -17,6 +17,7 @@ import { useAppDispatch } from '../../../app/hooks';
 import { push } from 'connected-react-router';
 import { AppRoutes } from '../../../routing/routes';
 import history from '../../../app/history';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles({
   newsBox: {
@@ -67,7 +68,7 @@ export const OrganizerDashboard = () => {
             <Box display='flex' flexDirection='column'>
               {events.map((event) => {
                 return (
-                  <a onClick={() => setEventToShow(event)} href='{item.href}'>
+                  <Button onClick={() => setEventToShow(event)}>
                     <Typography
                       sx={{ py: '2px' }}
                       onMouseOver={(e) => {
@@ -84,7 +85,7 @@ export const OrganizerDashboard = () => {
                     >
                       {event.name}
                     </Typography>
-                  </a>
+                  </Button>
                 );
               })}
             </Box>
@@ -100,7 +101,7 @@ export const OrganizerDashboard = () => {
               }}
               endIcon={<ArrowForwardIosIcon />}
               // onClick={handleViewAllEventsClick}
-              href={AppRoutes.ALL_EVENTS}
+              href={AppRoutes.CLUB_ALL_EVENTS}
             >
               view all events
             </Button>
@@ -161,7 +162,13 @@ export const OrganizerDashboard = () => {
               }}
               href={AppRoutes.EVENT}
             >
-              See Details
+              <Link
+                style={{ color: 'white' }}
+                to={AppRoutes.CLUB_EVENT_DETAILS}
+                state={{ event: eventToShow }}
+              >
+                See details
+              </Link>
             </Button>
           </Box>
         </Box>

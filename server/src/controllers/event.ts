@@ -128,7 +128,6 @@ export const createEvent = async (req: Request, res: Response) => {
 
 export const getEventById = async (req: Request, res: Response) => {
   const { id } = req.body;
-  console.log(id);
   try {
     const event = await eventRepo.findOne({ id: id });
     if (!event) {
@@ -136,6 +135,7 @@ export const getEventById = async (req: Request, res: Response) => {
         message: "No event exists with the provided id",
       });
     }
+    console.log("the event is", event.name);
     return res.status(200).send({
       event: event,
     });
@@ -176,24 +176,36 @@ export const registerEvent = async (req: Request, res: Response) => {
   try {
     const { eventId, userId } = req.body;
     const event = await eventRepo.findOne({ id: eventId });
-
     const user = await userRepo.findOne({ id: userId });
 
-    if (user) {
-      const registeredEvents = [...user.eventsRegistered, eventId];
-      user.eventsRegistered = registeredEvents;
-      const updatedUser = await userRepo.updateByUserId(userId, {
-        ...user,
+    if (!user) {
+      return res.status(400).send({
+        message: "The user doesnot exit!",
       });
     }
 
-    if (event) {
-      const registeredMembers = [...event.registeredMembers, userId];
-      event.registeredMembers = registeredMembers;
-      const updatedEvent = await eventRepo.updateByEventId(eventId, {
-        ...event,
+    if (!event) {
+      return res.status(400).send({
+        message: "The event doesnot exit!",
       });
     }
+
+    // if (user) {
+    //   const registeredEvents = [...user.eventsRegistered, eventId];
+    //   user.eventsRegistered = registeredEvents;
+    //   const updatedUser = await userRepo.updateByUserId(userId, {
+    //     ...user,
+    //   });
+    // }
+
+    // if (event) {
+    //   const registeredMembers= [...event.registeredMembers, userId];
+    //   event.registeredMembers = registeredMembers;
+    //   console.log(event);
+    //   const updatedEvent = await eventRepo.updateByEventId(eventId, {
+    //     ...event,
+    //   });
+    // }
 
     const updatedUser = await userRepo.findOne({ id: userId });
 
