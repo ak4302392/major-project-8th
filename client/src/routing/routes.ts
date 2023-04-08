@@ -21,7 +21,11 @@ export enum AppRoutes {
   CREATE_EVENT = '/evnts/event/create',
   UPDATE_EVENT = '/evnts/event/update',
   ALL_EVENTS = '/events/all-events',
-  CLUB_ALL_EVENTS="/club/all-events",
+  CLUB_ALL_EVENTS = "/club/all-events",
+
+  //general common routes
+  COMMONN_CLUB_DETAILS="/common/club/details",
+  
 
   ABOUT = '/about',
   TESTIMONIALS = '/testimonial',

@@ -48,11 +48,6 @@ export const OrganizerDashboard = () => {
 
   const [eventToShow, setEventToShow] = useState<GetEventPayload>(events[0]);
 
-  const handleViewAllEventsClick = () => {
-    console.log('i am here');
-    history.push(AppRoutes.EVENTS);
-  };
-
   return (
     <Box mx={[1, 3, 5, 10]} mt={[3, 4, 7]}>
       <Box display='flex'>
@@ -66,28 +61,32 @@ export const OrganizerDashboard = () => {
           </Box>
           <Box overflow='auto' className={classes.newsBox} height='auto'>
             <Box display='flex' flexDirection='column'>
-              {events.map((event) => {
-                return (
-                  <Button onClick={() => setEventToShow(event)}>
-                    <Typography
-                      sx={{ py: '2px' }}
-                      onMouseOver={(e) => {
-                        const target = e.target as HTMLSpanElement;
-                        target.style.color = 'black';
-                        setEventToShow(event);
-                      }}
-                      onMouseOut={(e) => {
-                        const target = e.target as HTMLSpanElement;
-                        target.style.color = 'white';
-                      }}
-                      color='white'
-                      variant='subtitle1'
-                    >
-                      {event.name}
-                    </Typography>
-                  </Button>
-                );
-              })}
+              {events.length ? (
+                events.map((event) => {
+                  return (
+                    <Button onClick={() => setEventToShow(event)}>
+                      <Typography
+                        sx={{ py: '2px' }}
+                        onMouseOver={(e) => {
+                          const target = e.target as HTMLSpanElement;
+                          target.style.color = 'black';
+                          setEventToShow(event);
+                        }}
+                        onMouseOut={(e) => {
+                          const target = e.target as HTMLSpanElement;
+                          target.style.color = 'white';
+                        }}
+                        color='white'
+                        variant='subtitle1'
+                      >
+                        {event.name}
+                      </Typography>
+                    </Button>
+                  );
+                })
+              ) : (
+                <Typography variant='h6'>No upcoming events. You can create an event</Typography>
+              )}
             </Box>
           </Box>
           <Box display='flex' justifyContent='center' mt={[1, 3, 5]} gap={[2, 3, 5]}>
@@ -129,48 +128,54 @@ export const OrganizerDashboard = () => {
           flexDirection='column'
           mb={[0]}
         >
-          <Box mb={[1, 2]}>
-            <a href='{href}'>
-              <Typography variant='h6' color='white' textTransform='uppercase'>
-                {eventToShow.name}
-              </Typography>
-            </a>
-          </Box>
-          <Box sx={{ height: '10rem', width: '16rem' }}>
-            <img src={eventToShow.images[0]} />
-          </Box>
-          <Box
-            height='100px'
-            overflow='auto'
-            px={[1, 2, 3]}
-            mt={[2, 4]}
-            className={classes.invisibleScrollBar}
-          >
-            <Typography color='white' variant='subtitle1'>
-              {eventToShow.desc}
-            </Typography>
-          </Box>
-          <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
-            <Button
-              variant='contained'
-              color='primary'
-              // href={button?.href}
-              sx={{
-                boxShadow:
-                  '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
-                textTransform: 'uppercase',
-              }}
-              href={AppRoutes.EVENT}
-            >
-              <Link
-                style={{ color: 'white' }}
-                to={AppRoutes.CLUB_EVENT_DETAILS}
-                state={{ event: eventToShow }}
+          {events.length ? (
+            <>
+              <Box mb={[1, 2]}>
+                <a href='{href}'>
+                  <Typography variant='h6' color='white' textTransform='uppercase'>
+                    {eventToShow.name}
+                  </Typography>
+                </a>
+              </Box>
+              <Box sx={{ height: '10rem', width: '16rem' }}>
+                <img src={eventToShow.images[0]} />
+              </Box>
+              <Box
+                height='100px'
+                overflow='auto'
+                px={[1, 2, 3]}
+                mt={[2, 4]}
+                className={classes.invisibleScrollBar}
               >
-                See details
-              </Link>
-            </Button>
-          </Box>
+                <Typography color='white' variant='subtitle1'>
+                  {eventToShow.desc}
+                </Typography>
+              </Box>
+              <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  // href={button?.href}
+                  sx={{
+                    boxShadow:
+                      '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
+                    textTransform: 'uppercase',
+                  }}
+                  href={AppRoutes.EVENT}
+                >
+                  <Link
+                    style={{ color: 'white' }}
+                    to={AppRoutes.CLUB_EVENT_DETAILS}
+                    state={{ event: eventToShow }}
+                  >
+                    See details
+                  </Link>
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <Typography>No upcoming events</Typography>
+          )}
         </Box>
       </Box>
 

@@ -99,7 +99,7 @@ export const UserAllEvents = () => {
                     }}
                     swipeable={true}
                     draggable={true}
-                    showDots={true}
+                    showDots={false}
                     autoPlay
                     infinite
                     removeArrowOnDeviceType={['desktop', 'tablet', 'mobile']}
@@ -114,7 +114,8 @@ export const UserAllEvents = () => {
                 </BlogPostCardMediaWrapper>
                 <Box sx={{ mt: 2 }}>
                   <div>
-                    <Chip label={event.category} variant='outlined' />
+                    <Chip sx={{ mr: '10px' }} label={event.category} variant='outlined' />
+                    <Chip label={event.clubName} variant='outlined' />
                   </div>
                   <Typography sx={{ marginTop: '10px' }} variant='h6' color='primary'>
                     {event.name}

@@ -9,6 +9,7 @@ import {
   MenuItem,
   FormControl,
   IconButton,
+  SelectChangeEvent,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import React, { useEffect, useState } from 'react';
@@ -18,6 +19,8 @@ import { useRouter } from 'next/router';
 import store from '../../app/state';
 import { isOrganizerAuthenticated, organizerLogout } from '../auth/organizerAuthSlice';
 import { AppRoutes } from '../../routing/routes';
+import { Link } from 'react-router-dom';
+import history from '../../app/history';
 
 const useStyles = makeStyles((theme) => {});
 
@@ -147,6 +150,13 @@ export const Navbar = () => {
     window.location.assign('/');
   };
 
+  const handleClubSelect = (event: SelectChangeEvent<unknown>) => {
+    const clubId = event.target.value as string;
+    window.location.assign(`${AppRoutes.COMMONN_CLUB_DETAILS}?clubId=${clubId}`);
+    // history.push(`${AppRoutes.COMMONN_CLUB_DETAILS}?clubId=${clubId}`);
+    // history.push();
+  };
+
   return (
     <Box
       display='flex'
@@ -239,12 +249,13 @@ export const Navbar = () => {
                 open={openSelectIndex === 0}
                 onClose={handleSelectClose}
                 onOpen={handleSelectOpen(0)}
+                onChange={handleClubSelect}
               >
-                <MenuItem value={10}>Robotics</MenuItem>
-                <MenuItem value={20}>Vision</MenuItem>
-                <MenuItem value={30}>Think India</MenuItem>
-                <MenuItem value={30}>Pixel</MenuItem>
-                <MenuItem value={30}>Technosearch</MenuItem>
+                <MenuItem value='201'>Robotics</MenuItem>
+                <MenuItem value='202'>Vision</MenuItem>
+                <MenuItem value='203'>Think India</MenuItem>
+                <MenuItem value='204'>Pixel</MenuItem>
+                <MenuItem value='205'>Technosearch</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -261,12 +272,13 @@ export const Navbar = () => {
                 open={openSelectIndex === 1}
                 onClose={handleSelectClose}
                 onOpen={handleSelectOpen(1)}
+                onChange={handleClubSelect}
               >
-                <MenuItem value={10}>Rajbhasha Cell</MenuItem>
-                <MenuItem value={20}>Drishtant Cell</MenuItem>
-                <MenuItem value={30}>Magazine Editorial Cell</MenuItem>
-                <MenuItem value={30}>Debating Cell</MenuItem>
-                <MenuItem value={30}>Quizzers Cell</MenuItem>
+                <MenuItem value='301'>Rajbhasha Cell</MenuItem>
+                <MenuItem value='302'>Drishtant Cell</MenuItem>
+                <MenuItem value='303'>Magazine Editorial Cell</MenuItem>
+                <MenuItem value='304'>Debating Cell</MenuItem>
+                <MenuItem value='305'>Quizzers Cell</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -283,11 +295,12 @@ export const Navbar = () => {
                 open={openSelectIndex === 2}
                 onClose={handleSelectClose}
                 onOpen={handleSelectOpen(2)}
+                onChange={handleClubSelect}
               >
-                <MenuItem value={10}>Robaroo</MenuItem>
-                <MenuItem value={20}>A se Aenak</MenuItem>
-                <MenuItem value={30}>Maffick</MenuItem>
-                <MenuItem value={30}>Technosearch</MenuItem>
+                <MenuItem value='101'>Robaroo</MenuItem>
+                <MenuItem value='102'>A se Aenak</MenuItem>
+                <MenuItem value='103'>Maffick</MenuItem>
+                <MenuItem value='104'>Spic Macay</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -313,14 +326,15 @@ export const Navbar = () => {
                 open={openSelectIndex === 3}
                 onClose={handleSelectClose}
                 onOpen={handleSelectOpen(3)}
+                onChange={handleClubSelect}
               >
-                <MenuItem value={10}>ISTE</MenuItem>
-                <MenuItem value={20}>IEEE</MenuItem>
-                <MenuItem value={30}>Purge</MenuItem>
-                <MenuItem value={30}>Inspire</MenuItem>
-                <MenuItem value={30}>SAE Club</MenuItem>
-                <MenuItem value={30}>NSS</MenuItem>
-                <MenuItem value={30}>EBSB</MenuItem>
+                <MenuItem value='401'>ISTE</MenuItem>
+                <MenuItem value='402'>IEEE</MenuItem>
+                <MenuItem value='403'>Purge</MenuItem>
+                <MenuItem value='404'>Inspire</MenuItem>
+                <MenuItem value='405'>SAE Club</MenuItem>
+                <MenuItem value='406'>NSS</MenuItem>
+                <MenuItem value='407'>EBSB</MenuItem>
               </Select>
             </FormControl>
           </Grid>

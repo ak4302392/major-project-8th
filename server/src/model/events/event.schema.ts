@@ -9,7 +9,7 @@ export interface EventOptional {
   clubName?: string;
   clubId?: string;
   eventDate?: Date;
-  registeredMembers?: mongoose.Types.ObjectId[];
+  registeredMembers?: string[];
   images?: string[];
   category?: string;
   createdAt?: Date;
@@ -46,7 +46,7 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   registeredMembers: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    type: [String],
     default: [],
   },
   images: {

@@ -190,22 +190,20 @@ export const registerEvent = async (req: Request, res: Response) => {
       });
     }
 
-    // if (user) {
-    //   const registeredEvents = [...user.eventsRegistered, eventId];
-    //   user.eventsRegistered = registeredEvents;
-    //   const updatedUser = await userRepo.updateByUserId(userId, {
-    //     ...user,
-    //   });
-    // }
+    if (user) {
+      const registeredEvents = [...user.eventsRegistered, eventId];
+      user.eventsRegistered = registeredEvents;
+      const updatedUser = await userRepo.updateByUserId(userId, {
+        ...user,
+      });
+    }
 
-    // if (event) {
-    //   const registeredMembers= [...event.registeredMembers, userId];
-    //   event.registeredMembers = registeredMembers;
-    //   console.log(event);
-    //   const updatedEvent = await eventRepo.updateByEventId(eventId, {
-    //     ...event,
-    //   });
-    // }
+    if (event) {
+      event.registeredMembers = [...event.registeredMembers, userId];
+      const updatedEvent = await eventRepo.updateByEventId(eventId, {
+        ...event,
+      });
+    }
 
     const updatedUser = await userRepo.findOne({ id: userId });
 

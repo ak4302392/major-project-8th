@@ -7,4 +7,11 @@ const OrganizerLogin = async (payload: OrganizerLoginRequestPayload) =>
 // const googleLogin = async (payload: GoogleLoginRequest) =>
 //   axios.post('http://localhost:4001/api/v1/club/create', payload);
 
-export { OrganizerLogin };
+interface getClubIdPayload{
+  id: string;
+}
+const getClubById = async (payload: getClubIdPayload) => {
+  return axios.post('http://localhost:4001/api/v1/club/getClubById', payload);
+};
+
+export { OrganizerLogin, getClubById };

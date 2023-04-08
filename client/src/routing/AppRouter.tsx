@@ -20,6 +20,7 @@ import { Navbar } from '../components/navbar/Navbar';
 import { UserAllEvents } from '../components/dashboard/user-dashboard/UserAllEvents';
 import { UserEventDetails } from '../components/dashboard/user-dashboard/UserEventDetails';
 import { UserDashboard } from '../components/dashboard/user-dashboard/UserDashboard';
+import { CommonClubDetails } from '../components/dashboard/CommonClubDetails';
 
 export default function AppRouter() {
   const isAuthenticated = useSelector(isUserAuthenticated);
@@ -54,6 +55,7 @@ export default function AppRouter() {
 
           {/* common routes for both  */}
           <Route path={AppRoutes.DEFAULT} element={<HomePage />} />
+          <Route path={AppRoutes.COMMONN_CLUB_DETAILS} element={<CommonClubDetails />} />
         </Routes>
         <Box flexShrink='0' mt={[2, 5, 10]}>
           <Footer />

@@ -166,6 +166,7 @@ export const ClubLogin = async (req: Request, res: Response) => {
         events.push(getEventFromDBEvent(event));
       }
     }
+    console.log("the events are", events);
 
     return res.status(200).send({
       message: "Club Login sucessfull!",
@@ -176,6 +177,26 @@ export const ClubLogin = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(400).send({
       message: error.message ? error.message : "Request failed",
+    });
+  }
+};
+
+export const getClubById = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  try {
+    const club = await clubRepo.findOne({ clubId: id });
+    if (!club) {
+      return res.status(400).send({
+        message: "No club exists with the provided id",
+      });
+    }
+    console.log("the club is", club.name);
+    return res.status(200).send({
+      club: getClubFromDBClub(club),
+    });
+  } catch (error) {
+    return res.status(400).send({
+      message: error.message ? error.message : "The club cannot be fetched",
     });
   }
 };
@@ -206,6 +227,20 @@ export const getEventFromDBEvent = (event: EventDocument) => {
     category: event.category,
   };
 };
+
+export const getClubFromDBClub = (club: ClubDocument) => {
+  return {
+    clubId: club.clubId,
+    name: club.name,
+    desc: club.desc,
+    images: club.images,
+    industryType: club.industryType,
+    upcomingEvents: club.upcomingEvents,
+    cordinatorName: club.cordinatorName,
+    memories: club.memories,
+  };
+};
+
 const getTokenFromDBClub = (club: ClubDocument) => {
   return createJWT({
     email: club.accounts.orgAccount.id,
