@@ -22,3 +22,11 @@ export interface EventReturn {
   images: string[];
   category: string;
 }
+
+export interface registeredUsersResponse {
+  sNo: Number;
+  name: string;
+  phone: string;
+  email: string;
+  isManitStudent: string;
+}

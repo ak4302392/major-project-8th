@@ -110,7 +110,7 @@ export default function Event() {
             events over the years
           </Typography>
           <Box mt={[1, 3]}>
-            <ImageCarousel data={images} />
+            <ImageCarousel data={robarooImages} />
           </Box>
         </Box>
       </Box>

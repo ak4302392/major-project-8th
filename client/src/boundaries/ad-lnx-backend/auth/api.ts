@@ -10,4 +10,9 @@ const googleLogin = async (payload: GoogleLoginRequest) =>
 const register = async (payload: RegisterRequestPayload) =>
   axios.post('http://localhost:4001/api/v1/auth/sign-up', payload);
 
-export { login, googleLogin, register };
+const getUserById = async (payload: string) =>
+  axios.get('http://localhost:4001/api/v1/auth/getUserById', { params: { userId: payload } });
+
+
+
+export { login, googleLogin, register, getUserById };

@@ -9,7 +9,7 @@ export type image = {
   alt: string;
 };
 export interface carouselProps {
-  data: image[];
+  data: string[];
 }
 
 export default function ImageCarousel({ data }: carouselProps) {
@@ -40,9 +40,9 @@ export default function ImageCarousel({ data }: carouselProps) {
       infinite
       autoPlaySpeed={1000}
     >
-      {data.map((image) => (
+      {data.map((image, index) => (
         <Box mr={[1, 2, 3]} sx={{ height: '10rem' }}>
-          <img key={image.id} src={image.src} alt={image.alt} style={{ objectFit: 'cover' }} />
+          <img key={index} src={image} alt='image' style={{ objectFit: 'contain' }} />
         </Box>
       ))}
     </Carousel>

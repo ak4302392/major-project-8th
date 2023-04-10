@@ -41,7 +41,7 @@ export const CommonClubDetails = () => {
     getClub();
   }, [clubId]);
 
-  console.log(club);
+  console.log(club?.images[0]);
 
   if (!club) {
     return (
@@ -114,18 +114,30 @@ export const CommonClubDetails = () => {
                 autoPlaySpeed={1000}
               >
                 {club.images.map((img: string) => {
-                  return <img src={img} style={{ height: '25rem', paddingBottom: '1rem' }}></img>;
+                  return <img src="{img}" style={{ height: '25rem', paddingBottom: '1rem' }}></img>;
                 })}
               </Carousel>
             </BlogPostCardMediaWrapper>
           </Box>
         </Box>
-        <Box mt={[1, 7, 12]} display='flex' flexDirection='column'>
+        <Box
+          mt={[1, 7, 12]}
+          display='flex'
+          flexDirection='column'
+          sx={{
+            backgroundColor: '#abdaea',
+            marginTop: '4rem',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+            borderRadius: '25px',
+            paddingBottom: '25px',
+          }}
+        >
           <Typography variant='h6' sx={{ color: '#1E1E1E' }} textTransform='uppercase'>
             events over the years
           </Typography>
           <Box mt={[1, 3]}>
-            <ImageCarousel data={images} />
+            <ImageCarousel data={club.images} />
           </Box>
         </Box>
       </Box>

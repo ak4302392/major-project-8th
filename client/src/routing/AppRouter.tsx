@@ -28,7 +28,11 @@ export default function AppRouter() {
 
   return (
     <BrowserRouter>
-      <Box display='flex' flexDirection='column' sx={{ minHeight: '100vh' }}>
+      <Box
+        display='flex'
+        flexDirection='column'
+        sx={{ minHeight: '100vh', backgroundColor: 'white' }}
+      >
         <Box flex='1 0 auto'>
           <Navbar />
         </Box>

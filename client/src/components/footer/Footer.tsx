@@ -67,11 +67,11 @@ export const Footer: FC = (props) => (
       borderTopColor: 'divider',
       borderTopStyle: 'solid',
       borderTopWidth: 1,
-      pb: 6,
       pt: {
         md: 6,
         xs: 6,
       },
+      pb: '20px',
     }}
     {...props}
     display='flex'
@@ -182,13 +182,6 @@ export const Footer: FC = (props) => (
         my: 6,
       }}
     /> */}
-    <Typography
-      color='textSecondary'
-      variant='caption'
-      sx={{ mt: 8, fontSize: 12, fontWeight: 500 }}
-    >
-      All Rights Reserved.
-    </Typography>
     {/* </Container> */}
   </Box>
 );

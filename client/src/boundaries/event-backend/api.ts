@@ -15,5 +15,11 @@ export const getEventById = async (payload: { id: string }) => {
   return axios.post('http://localhost:4001/api/v1/events/getEventByEventId', payload);
 };
 
+export const exportRegisteredUsers = async (payload: string[]) => {
+  return axios.post('http://localhost:4001/api/v1/events/exportAllRegisteredUsers', payload, {
+    responseType: 'blob',
+  });
+};
+
 // const googleLogin = async (payload: GoogleLoginRequest) =>
 //   axios.post('http://localhost:4001/api/v1/club/create', payload);

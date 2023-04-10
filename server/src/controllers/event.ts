@@ -7,8 +7,10 @@ import { getEventFromDBEvent } from "./club";
 import { EventModel } from "@/model/events/event.schema";
 import userRepo from "@/model/user/user.repo";
 import { getWebUserFromDBUser } from "./auth";
+import { registeredUsersResponse } from "@/types/dto/event.dto";
 
 const bcrypt = require("bcrypt");
+const excelJS = require("exceljs");
 
 /**
  * Create user
@@ -135,7 +137,6 @@ export const getEventById = async (req: Request, res: Response) => {
         message: "No event exists with the provided id",
       });
     }
-    console.log("the event is", event.name);
     return res.status(200).send({
       event: event,
     });
@@ -155,13 +156,75 @@ export const getEventById = async (req: Request, res: Response) => {
 export const getAllEvents = async (req: Request, res: Response) => {
   try {
     const events = await eventRepo.findMany({}, {});
-    console.log(events);
     return res.status(200).send({
       events: events,
     });
   } catch (error) {
     return res.status(400).send({
       message: error.message ? error.message : "Events cannot be fetched",
+    });
+  }
+};
+
+export const exportAllRegisteredUsers = async (req: Request, res: Response) => {
+  // const users = req.body;
+  // console.log("users are", users);
+  try {
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Registered Users");
+
+    worksheet.columns = [
+      { header: "S.No.", key: "sNo", width: 8 },
+      { header: "Full Name", key: "name", width: 30 },
+      { header: "Is MANIT Student?", key: "isManitStudent", width: 20 },
+      { header: "Mobile Number", key: "phone", width: 20 },
+      { header: "Email", key: "email", width: 40 },
+    ];
+
+    const users = req.body;
+    const userData: registeredUsersResponse[] = [];
+    let counter = 1;
+    for (const userId of users) {
+      const user = await userRepo.findOne({ id: userId });
+      userData.push({
+        sNo: counter,
+        name: user?.name ?? "",
+        phone: user?.phone ?? "",
+        isManitStudent:
+          user?.isManitStudent ?? user?.isManitStudent === "False"
+            ? "No"
+            : "Yes",
+        email: user?.email ?? "",
+      });
+      worksheet.addRow({
+        sNo: counter,
+        name: user?.name ?? "Amit",
+        phone: user?.phone ?? "",
+        isManitStudent: user?.isManitStudent ?? "false",
+        email: user?.email ?? "",
+      });
+
+      counter++;
+    }
+
+    worksheet.getRow(1).eachCell((cell: any) => {
+      cell.font = { bold: true };
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.setHeader("Content-Disposition", `attachment; filename=users.xlsx`);
+
+    return workbook.xlsx.write(res).then(() => {
+      res.status(200);
+      res.end();
+    });
+  } catch (error) {
+    return res.status(400).send({
+      message: error.message ? error.message : "Server Error",
     });
   }
 };

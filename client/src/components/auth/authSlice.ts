@@ -72,9 +72,9 @@ export const registerAsync = createAsyncThunk(
   async (payload: RegisterRequestPayload, thunkApi) => {
     try {
       const response = await register(payload);
-      const data = response.data as LoginResponsePayload;
-      window.location.assign(AppRoutes.DEFAULT);
-      return data;
+      // const data = response.data as LoginResponsePayload;
+      window.location.assign(AppRoutes.LOGIN);
+      // return data;
     } catch (err: any) {
       throw err;
     }
@@ -148,14 +148,14 @@ export const authSlice = createSlice({
       state.isLoggedIn = true;
       state.token = action.payload.token;
     });
-    builder.addCase(registerAsync.fulfilled, (state, action) => {
-      state.isLoggedIn = true;
-      // this is optional if you are returning token after registration
-      state.token = action.payload.token;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', action.payload.token);
-      }
-    });
+    // builder.addCase(registerAsync.fulfilled, (state, action) => {
+    //   state.isLoggedIn = true;
+    //   // this is optional if you are returning token after registration
+    //   state.token = action.payload.token;
+    //   if (typeof window !== 'undefined') {
+    //     localStorage.setItem('token', action.payload.token);
+    //   }
+    // });
     builder.addCase(registerEventAsync.fulfilled, (state, action) => {
       state.user = action.payload.user;
     });

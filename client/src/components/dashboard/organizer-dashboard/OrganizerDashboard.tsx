@@ -53,7 +53,17 @@ export const OrganizerDashboard = () => {
       <Box display='flex'>
         {/* <EventOverview {...newsToShow} /> */}
 
-        <Box width='60%' p={[0.5, 1, 2]} mr={[1, 5, 7]} sx={{ backgroundColor: '#45B3D6' }}>
+        <Box
+          width='60%'
+          p={[0.5, 1, 2]}
+          mr={[1, 5, 7]}
+          sx={{
+            backgroundColor: '#45B3D6',
+            borderRadius: '25px',
+            boxShadow:
+              ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+          }}
+        >
           <Box mb={[1, 2]}>
             <Typography variant='h6' color='white' textTransform='uppercase'>
               UPCOMING EVENTS
@@ -101,6 +111,7 @@ export const OrganizerDashboard = () => {
               endIcon={<ArrowForwardIosIcon />}
               // onClick={handleViewAllEventsClick}
               href={AppRoutes.CLUB_ALL_EVENTS}
+              style={{ position: 'relative', top: '95px' }}
             >
               view all events
             </Button>
@@ -114,6 +125,7 @@ export const OrganizerDashboard = () => {
               }}
               endIcon={<ArrowForwardIosIcon />}
               href={AppRoutes.CREATE_EVENT}
+              style={{ position: 'relative', top: '95px' }}
             >
               create event
             </Button>
@@ -122,7 +134,13 @@ export const OrganizerDashboard = () => {
         {/* the event overview */}
         <Box
           p={[0.5, 1, 2]}
-          sx={{ backgroundColor: '#45B3D6', width: '40%' }}
+          sx={{
+            backgroundColor: '#45B3D6',
+            borderRadius: '25px',
+            width: '40%',
+            boxShadow:
+              ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+          }}
           display='flex'
           alignItems='center'
           flexDirection='column'
@@ -179,7 +197,18 @@ export const OrganizerDashboard = () => {
         </Box>
       </Box>
 
-      <Box display='flex' flexDirection='column'>
+      <Box
+        display='flex'
+        flexDirection='column'
+        sx={{
+          backgroundColor: '#abdaea',
+          marginTop: '4rem',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          borderRadius: '25px',
+          paddingBottom: '25px',
+        }}
+      >
         <Box my={[2]}>
           <Typography
             variant='body1'
@@ -190,7 +219,7 @@ export const OrganizerDashboard = () => {
         </Box>
 
         <Box>
-          <ImageCarousel data={images} />
+          <ImageCarousel data={clubData.images} />
         </Box>
       </Box>
     </Box>

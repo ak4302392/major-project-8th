@@ -63,6 +63,14 @@ export const UserDashboard = () => {
 
   const events = getRegisteredEvents(store.getState());
 
+  const memories = [];
+
+  for (let i = 0; i < events.length; i++) {
+    for (let j = 0; j < events[i].images.length; j++) {
+      memories.push(events[i].images[j]);
+    }
+  }
+
   const [eventToShow, setEventToShow] = useState<GetEventPayload>(events[0]);
 
   return (
@@ -115,19 +123,6 @@ export const UserDashboard = () => {
             >
               
               view all events
-            </Button>
-            <Button
-              variant='contained'
-              color='secondary'
-              sx={{
-                boxShadow:
-                  '-1px -3px 4px rgba(245, 245, 245, 0.4), 1px 3px 4px rgba(102, 102, 102, 0.4)',
-                textTransform: 'uppercase',
-              }}
-              endIcon={<ArrowForwardIosIcon />}
-              href={AppRoutes.USER_ALL_EVENTS}
-            >
-              view all registered events
             </Button>
           </Box>
         </Box>
@@ -195,7 +190,7 @@ export const UserDashboard = () => {
         </Box>
 
         <Box>
-          <ImageCarousel data={images} />
+          <ImageCarousel data={memories} />
         </Box>
       </Box>
     </Box>

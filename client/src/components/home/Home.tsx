@@ -129,6 +129,7 @@ const useStyles = makeStyles({
       backgroundColor: 'rgba(30, 30, 30, 0.5)',
       borderRadius: '20px',
     },
+    borderRadius: '25px',
   },
   invisibleScrollBar: {
     '&::-webkit-scrollbar': {
@@ -145,15 +146,24 @@ export const HomePage = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   // const [events, setEvents] = useState<GetEventPayload[]>([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchEvents() {
       await dispatch(GetAllEventsAsync());
     }
     fetchEvents();
+    setLoading(false);
   }, []);
 
   const events = getAllEvents(store.getState());
+
+  const memories = [];
+
+  for (let i = 0; i < events.length; i++) {
+    for (let j = 0; j < events[i].images.length; j++) {
+      memories.push(events[i].images[j]);
+    }
+  }
 
   console.log('events', events);
 
@@ -165,7 +175,17 @@ export const HomePage = () => {
     <Box mx={[1, 3, 5, 10]} mt={[3, 4, 7]}>
       <Box display='flex'>
         {/* <EventOverview {...newsToShow} /> */}
-        <Box width='60%' p={[0.5, 1, 2]} mr={[1, 5, 7]} sx={{ backgroundColor: '#45B3D6' }}>
+        <Box
+          width='60%'
+          p={[0.5, 1, 2]}
+          mr={[1, 5, 7]}
+          sx={{
+            backgroundColor: '#45B3D6',
+            borderRadius: '25px',
+            boxShadow:
+              ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+          }}
+        >
           <Box mb={[1, 2]}>
             <Typography variant='h6' color='white' textTransform='uppercase'>
               UPCOMING EVENTS
@@ -212,6 +232,7 @@ export const HomePage = () => {
               }}
               endIcon={<ArrowForwardIosIcon />}
               href={AppRoutes.USER_ALL_EVENTS}
+              style={{ position: 'relative', top: '95px' }}
             >
               view all events
             </Button>
@@ -221,7 +242,13 @@ export const HomePage = () => {
         {eventToShow ? (
           <Box
             p={[0.5, 1, 2]}
-            sx={{ backgroundColor: '#45B3D6', width: '40%' }}
+            sx={{
+              backgroundColor: '#45B3D6',
+              width: '40%',
+              borderRadius: '25px',
+              boxShadow:
+                ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+            }}
             display='flex'
             alignItems='center'
             flexDirection='column'
@@ -292,7 +319,18 @@ export const HomePage = () => {
         )}
       </Box>
 
-      <Box display='flex' flexDirection='column'>
+      <Box
+        display='flex'
+        flexDirection='column'
+        sx={{
+          backgroundColor: '#abdaea',
+          marginTop: '4rem',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          borderRadius: '25px',
+          paddingBottom: '25px',
+        }}
+      >
         <Box my={[2]}>
           <Typography
             variant='body1'
@@ -303,7 +341,7 @@ export const HomePage = () => {
         </Box>
 
         <Box>
-          <ImageCarousel data={images} />
+          <ImageCarousel data={memories} />
         </Box>
       </Box>
     </Box>

@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { formatDate } from '../../evnt/CreateEvent';
 import { getUser, isUserAuthenticated } from '../../auth/authSlice';
+import { exportRegisteredUsers } from '../../../boundaries/event-backend/api';
 
 const BlogPostCardMediaWrapper = styled('div')({
   paddingTop: 'calc(100% * 4 / 4)',
@@ -24,6 +25,24 @@ export const ClubEventDetails = () => {
   const location = useLocation();
   const { event } = location.state;
   console.log(event);
+
+  const handleUsersDownloadClick = async () => {
+    try {
+      const response = await exportRegisteredUsers(event.registeredMembers);
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheatml.sheet',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'users.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Box
@@ -73,6 +92,9 @@ export const ClubEventDetails = () => {
                 >
                   {event.registeredMembers.length}
                 </Typography>
+                <Button variant='outlined' onClick={handleUsersDownloadClick}>
+                  Download excel file
+                </Button>
               </Box>
 
               {/* buttons */}
@@ -87,7 +109,7 @@ export const ClubEventDetails = () => {
                   }}
                   endIcon={<ArrowForwardIosIcon />}
                   // onClick={handleViewAllEventsClick}
-                  href={AppRoutes.USER_ALL_EVENTS}
+                  href={AppRoutes.CLUB_ALL_EVENTS}
                 >
                   view all events
                 </Button>
@@ -130,12 +152,24 @@ export const ClubEventDetails = () => {
             </BlogPostCardMediaWrapper>
           </Box>
         </Box>
-        <Box mt={[1, 7, 12]} display='flex' flexDirection='column'>
+        <Box
+          mt={[1, 7, 12]}
+          display='flex'
+          flexDirection='column'
+          sx={{
+            backgroundColor: '#abdaea',
+            marginTop: '4rem',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+            borderRadius: '25px',
+            paddingBottom: '25px',
+          }}
+        >
           <Typography variant='h6' sx={{ color: '#1E1E1E' }} textTransform='uppercase'>
             events over the years
           </Typography>
           <Box mt={[1, 3]}>
-            <ImageCarousel data={images} />
+            <ImageCarousel data={event.images} />
           </Box>
         </Box>
       </Box>

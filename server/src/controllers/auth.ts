@@ -4,6 +4,7 @@ import { UserDocument } from "@/model/user/user.schema";
 import UserRepo from "@/model/user/user.repo";
 import { createJWT } from "@/utils/jwt";
 import { getAllEvents } from "./event";
+import userRepo from "@/model/user/user.repo";
 
 const bcrypt = require("bcrypt");
 
@@ -82,8 +83,6 @@ export const createUser = async (req: Request, res: Response) => {
 
     return res.status(200).send({
       message: "User created!",
-      token: getTokenFromDBUser(newUser),
-      user: getWebUserFromDBUser(newUser),
     });
   } catch (error) {
     return res.status(400).send({
@@ -136,6 +135,27 @@ export const login = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(400).send({
       message: error.message ? error.message : "Request failed",
+    });
+  }
+};
+
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+    console.log(userId);
+    const user = await userRepo.findOne({ id: userId });
+    if (!user) {
+      return res.status(400).send({
+        message: "Some error occured at server side.",
+      });
+    }
+
+    return res.status(200).send({
+      user: getWebUserFromDBUser(user),
+    });
+  } catch (err) {
+    return res.status(400).send({
+      message: err.message ? err.message : "Server Error",
     });
   }
 };
