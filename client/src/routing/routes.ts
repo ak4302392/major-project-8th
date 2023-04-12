@@ -4,6 +4,7 @@ export enum AppRoutes {
   LOGOUT = '/logout',
   SIGNUP = '/auth/sign-up',
   DEFAULT = '/',
+  OTP_VERIFICATION = '/auth/sign-up/otp-verification',
 
   EVENT = '/evnts/event',
   EVENTS = '/evnts',
@@ -17,15 +18,14 @@ export enum AppRoutes {
   //organizer routes
   ORGANIZER_DASHBOARD = '/organizer/dashboard',
   CLUB_DETAILS = '/club',
-  CLUB_EVENT_DETAILS="/club/event-details",
+  CLUB_EVENT_DETAILS = '/club/event-details',
   CREATE_EVENT = '/evnts/event/create',
   UPDATE_EVENT = '/evnts/event/update',
   ALL_EVENTS = '/events/all-events',
-  CLUB_ALL_EVENTS = "/club/all-events",
+  CLUB_ALL_EVENTS = '/club/all-events',
 
   //general common routes
-  COMMONN_CLUB_DETAILS="/common/club/details",
-  
+  COMMONN_CLUB_DETAILS = '/common/club/details',
 
   ABOUT = '/about',
   TESTIMONIALS = '/testimonial',

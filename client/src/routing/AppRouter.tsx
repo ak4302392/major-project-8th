@@ -21,6 +21,7 @@ import { UserAllEvents } from '../components/dashboard/user-dashboard/UserAllEve
 import { UserEventDetails } from '../components/dashboard/user-dashboard/UserEventDetails';
 import { UserDashboard } from '../components/dashboard/user-dashboard/UserDashboard';
 import { CommonClubDetails } from '../components/dashboard/CommonClubDetails';
+import { OtpVerification } from '../components/auth/OtpVerification';
 
 export default function AppRouter() {
   const isAuthenticated = useSelector(isUserAuthenticated);
@@ -42,6 +43,7 @@ export default function AppRouter() {
           <Route path={AppRoutes.USER_DASHBOARD} element={<UserDashboard />} />
           <Route path={AppRoutes.LOGIN} element={<Login />} />
           <Route path={AppRoutes.SIGNUP} element={<Signup />} />
+          <Route path={AppRoutes.OTP_VERIFICATION} element={<OtpVerification />} />
           <Route path={AppRoutes.USER_EVENT_DETAILS} element={<UserEventDetails />} />
 
           {/* organizer Routes */}

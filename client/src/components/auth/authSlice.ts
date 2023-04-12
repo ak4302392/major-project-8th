@@ -2,7 +2,12 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { push } from 'connected-react-router';
 import { startAppListening } from '../../app/listenerMiddleware';
 import type { RootState } from '../../app/type';
-import { login, googleLogin, register } from '../../boundaries/ad-lnx-backend/auth/api';
+import {
+  login,
+  googleLogin,
+  register,
+  verifyEmailOtpAPI,
+} from '../../boundaries/ad-lnx-backend/auth/api';
 import { AppRoutes } from '../../routing/routes';
 import {
   GoogleLoginRequest,
@@ -72,6 +77,22 @@ export const registerAsync = createAsyncThunk(
   async (payload: RegisterRequestPayload, thunkApi) => {
     try {
       const response = await register(payload);
+      const userId = response?.data?.userId;
+      // const data = response.data as LoginResponsePayload;
+      window.location.assign(`${AppRoutes.OTP_VERIFICATION}?userId=${userId}`);
+      // return data;
+    } catch (err: any) {
+      throw err;
+    }
+  }
+);
+
+//email otp verification
+export const emailOtpVerificationAsync = createAsyncThunk(
+  'auth/emailOtpVerificationAsync',
+  async (payload: { userId: string; otp: string }, thunkApi) => {
+    try {
+      const response = await verifyEmailOtpAPI(payload);
       // const data = response.data as LoginResponsePayload;
       window.location.assign(AppRoutes.LOGIN);
       // return data;
