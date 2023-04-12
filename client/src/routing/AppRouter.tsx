@@ -22,6 +22,7 @@ import { UserEventDetails } from '../components/dashboard/user-dashboard/UserEve
 import { UserDashboard } from '../components/dashboard/user-dashboard/UserDashboard';
 import { CommonClubDetails } from '../components/dashboard/CommonClubDetails';
 import { OtpVerification } from '../components/auth/OtpVerification';
+import { CreateClub } from '../components/dashboard/CreateClub';
 
 export default function AppRouter() {
   const isAuthenticated = useSelector(isUserAuthenticated);
@@ -58,6 +59,7 @@ export default function AppRouter() {
           <Route path={AppRoutes.ORGANIZER_DASHBOARD} element={<OrganizerDashboard />} />
           <Route path={AppRoutes.CLUB_ALL_EVENTS} element={<ClubAllEvents />} />
           <Route path={AppRoutes.CLUB_EVENT_DETAILS} element={<ClubEventDetails />} />
+          <Route path={AppRoutes.CREATE_CLUB} element={<CreateClub />} />
 
           {/* common routes for both  */}
           <Route path={AppRoutes.DEFAULT} element={<HomePage />} />

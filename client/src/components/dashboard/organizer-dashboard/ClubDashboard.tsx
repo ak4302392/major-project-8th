@@ -124,7 +124,7 @@ export const ClubDashboard = () => {
                 }}
                 swipeable={true}
                 draggable={true}
-                showDots={true}
+                showDots={false}
                 autoPlay
                 infinite
                 removeArrowOnDeviceType={['desktop', 'tablet', 'mobile']}
@@ -138,7 +138,7 @@ export const ClubDashboard = () => {
           </Box>
         </Box>
         <Box
-          mt={[1, 7, 12]}
+          mt={[1, 7, 20]}
           display='flex'
           flexDirection='column'
           sx={{

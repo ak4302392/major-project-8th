@@ -114,7 +114,7 @@ export const CommonClubDetails = () => {
                 autoPlaySpeed={1000}
               >
                 {club.images.map((img: string) => {
-                  return <img src="{img}" style={{ height: '25rem', paddingBottom: '1rem' }}></img>;
+                  return <img src={img} style={{ height: '25rem', paddingBottom: '1rem' }}></img>;
                 })}
               </Carousel>
             </BlogPostCardMediaWrapper>
