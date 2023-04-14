@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { OrganizerLoginRequestPayload } from './model';
+import { createClubDataType, OrganizerLoginRequestPayload } from './model';
 
 const OrganizerLogin = async (payload: OrganizerLoginRequestPayload) =>
   axios.post('http://localhost:4001/api/v1/club/login', payload);
@@ -7,11 +7,14 @@ const OrganizerLogin = async (payload: OrganizerLoginRequestPayload) =>
 // const googleLogin = async (payload: GoogleLoginRequest) =>
 //   axios.post('http://localhost:4001/api/v1/club/create', payload);
 
-interface getClubIdPayload{
+interface getClubIdPayload {
   id: string;
 }
 const getClubById = async (payload: getClubIdPayload) => {
   return axios.post('http://localhost:4001/api/v1/club/getClubById', payload);
 };
 
-export { OrganizerLogin, getClubById };
+const createClubAPI = async (payload: createClubDataType) =>
+  axios.post('http://localhost:4001/api/v1/club/create', payload);
+
+export { OrganizerLogin, getClubById, createClubAPI };

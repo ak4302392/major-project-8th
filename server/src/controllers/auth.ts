@@ -5,6 +5,9 @@ import UserRepo from "@/model/user/user.repo";
 import { createJWT } from "@/utils/jwt";
 import { getAllEvents } from "./event";
 import userRepo from "@/model/user/user.repo";
+import { generateOTP, mailTransport } from "@/utils/mail";
+import { verificationModel } from "@/model/email-verification/verification.schema";
+import { TempUserModel } from "@/model/user/tempUser.schema";
 
 const bcrypt = require("bcrypt");
 
@@ -71,7 +74,7 @@ export const createUser = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await UserRepo.create({
+    const tempUser = new TempUserModel({
       name: name,
       email: email.toLowerCase().trim(),
       phone: phone,
@@ -81,14 +84,86 @@ export const createUser = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
+    tempUser.save();
+
+    //creating and saving the otp for some time
+    const OTP = generateOTP();
+
+    const verificationToken = new verificationModel({
+      owner: tempUser.id,
+      token: OTP,
+    });
+
+    await verificationToken.save();
+
+    // seding otp through mail to the user
+    mailTransport().sendMail({
+      from: "akrampur84099@gmail.com",
+      to: tempUser.email,
+      subject: "OTP for accound creation",
+      html: `<h1>${OTP}</h1>`,
+    });
+
     return res.status(200).send({
-      message: "User created!",
+      message: "OTP sent successfully",
+      userId: tempUser.id,
     });
   } catch (error) {
     return res.status(400).send({
       message: error.message ? error.message : "Request failed",
     });
   }
+};
+
+//email otp verification
+export const verifyOTP = async (req: Request, res: Response) => {
+  const { userId, otp } = req.body;
+  console.log(otp);
+  if (!userId || !otp.trim()) {
+    return res.status(400).send({
+      message: "Request failed",
+    });
+  }
+
+  const user = await TempUserModel.findOne({ id: userId });
+  if (!user) {
+    return res.status(400).send({
+      message: "Request failed",
+    });
+  }
+
+  const verificationData = await verificationModel.findOne({ owner: userId });
+
+  if (!verificationData) {
+    return res.status(400).send({
+      message: "Time expired for OTP. Resend it",
+    });
+  }
+  const OTP = verificationData?.token;
+
+  const isOTPValid = await bcrypt.compare(otp, verificationData.token);
+  if (!isOTPValid) {
+    return res.status(400).send({
+      message: "Invalid OTP. Please enter correct otp",
+    });
+  }
+
+  const newUser = await UserRepo.create({
+    name: user.name,
+    email: user.email.toLowerCase().trim(),
+    phone: user.phone,
+    isManitStudent: user.isManitStudent,
+    scholarNumber: user.scholarNumber,
+    eventsRegistered: [],
+    password: user.password,
+  });
+
+  verificationData.delete();
+  user.delete();
+
+  return res.status(200).send({
+    message: "Account created successfully!",
+  });
 };
 
 /**
