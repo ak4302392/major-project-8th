@@ -122,6 +122,8 @@ export const CreateClub = () => {
             cordinatorName: values.cordinatorName,
           };
           await dispatch(createClubAsync(payload));
+          helpers.resetForm();
+          setImages([]);
         }
       } catch (err: any) {
         console.log(err);

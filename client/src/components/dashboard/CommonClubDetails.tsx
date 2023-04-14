@@ -121,7 +121,7 @@ export const CommonClubDetails = () => {
           </Box>
         </Box>
         <Box
-          mt={[1, 7, 12]}
+          mt={[1, 7, 20]}
           display='flex'
           flexDirection='column'
           sx={{
