@@ -149,11 +149,11 @@ export const OrganizerDashboard = () => {
           {events.length ? (
             <>
               <Box mb={[1, 2]}>
-                <a href='{href}'>
+                <Link to={AppRoutes.CLUB_EVENT_DETAILS} state={{ event: eventToShow }}>
                   <Typography variant='h6' color='white' textTransform='uppercase'>
                     {eventToShow.name}
                   </Typography>
-                </a>
+                </Link>
               </Box>
               <Box sx={{ height: '10rem', width: '16rem' }}>
                 <img src={eventToShow.images[0]} />
