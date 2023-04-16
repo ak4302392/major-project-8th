@@ -1,6 +1,8 @@
 import { UserModel, UserOptional } from "./user.schema";
 import { User } from "@/types/dto/user.dto";
 import { EventModel } from "../events/event.schema";
+import { generateOTP, mailTransport } from "@/utils/mail";
+import { verificationModel } from "../email-verification/verification.schema";
 
 const create = async (data: User) => {
   const newUser = new UserModel({

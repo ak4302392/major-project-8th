@@ -52,22 +52,27 @@ export const UserDashboard = () => {
 
   const user = getUser(store.getState());
 
-  const eventsArray = user.eventsRegistered;
+  const eventsArray = user?.eventsRegistered;
 
   useEffect(() => {
+    console.log('i am here');
     async function fetchEvents() {
+      console.log('hi');
       await dispatch(getAllRegisteredEventsAsync({ eventsArray: eventsArray }));
+      console.log('hello');
     }
     fetchEvents();
   }, []);
 
   const events = getRegisteredEvents(store.getState());
 
+  console.log(events);
+
   const memories = [];
 
-  for (let i = 0; i < events.length; i++) {
-    for (let j = 0; j < events[i].images.length; j++) {
-      memories.push(events[i].images[j]);
+  for (let i = 0; i < events?.length; i++) {
+    for (let j = 0; j < events[i]?.images?.length; j++) {
+      memories.push(events[i]?.images[j]);
     }
   }
 
@@ -77,7 +82,17 @@ export const UserDashboard = () => {
     <Box mx={[1, 3, 5, 10]} mt={[3, 4, 7]}>
       <Box display='flex'>
         {/* <EventOverview {...newsToShow} /> */}
-        <Box width='60%' p={[0.5, 1, 2]} mr={[1, 5, 7]} sx={{ backgroundColor: '#45B3D6' }}>
+        <Box
+          width='60%'
+          p={[0.5, 1, 2]}
+          mr={[1, 5, 7]}
+          sx={{
+            backgroundColor: '#45B3D6',
+            borderRadius: '25px',
+            boxShadow:
+              ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+          }}
+        >
           <Box mb={[1, 2]}>
             <Typography variant='h6' color='white' textTransform='uppercase'>
               registered EVENTS
@@ -102,7 +117,7 @@ export const UserDashboard = () => {
                       color='white'
                       variant='subtitle1'
                     >
-                      {event.name}
+                      {event?.name}
                     </Typography>
                   </Button>
                 );
@@ -120,8 +135,8 @@ export const UserDashboard = () => {
               }}
               endIcon={<ArrowForwardIosIcon />}
               href={AppRoutes.USER_ALL_EVENTS}
+              style={{ position: 'relative', top: '95px' }}
             >
-              
               view all events
             </Button>
           </Box>
@@ -129,31 +144,37 @@ export const UserDashboard = () => {
         {/* the event overview */}
         <Box
           p={[0.5, 1, 2]}
-          sx={{ backgroundColor: '#45B3D6', width: '40%' }}
+          sx={{
+            backgroundColor: '#45B3D6',
+            width: '40%',
+            borderRadius: '25px',
+            boxShadow:
+              ' rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;',
+          }}
           display='flex'
           alignItems='center'
           flexDirection='column'
           mb={[0]}
         >
           <Box mb={[1, 2]}>
-            <a href='{href}'>
+            <Link to={AppRoutes.USER_EVENT_DETAILS} state={{ event: eventToShow }}>
               <Typography variant='h6' color='white' textTransform='uppercase'>
-                {eventToShow.name}
+                {eventToShow?.name}
               </Typography>
-            </a>
+            </Link>
           </Box>
           <Box sx={{ height: '10rem', width: '16rem' }}>
-            <img src={eventToShow.images[0]} />
+            <img src={eventToShow?.images[0]} />
           </Box>
           <Box
             height='100px'
             overflow='auto'
             px={[1, 2, 3]}
             mt={[2, 4]}
-            className={classes.invisibleScrollBar}
+            className={classes?.invisibleScrollBar}
           >
             <Typography color='white' variant='subtitle1'>
-              {eventToShow.desc}
+              {eventToShow?.desc}
             </Typography>
           </Box>
           <Box display='flex' justifyContent='center' mt={[1, 3, 5]}>
@@ -179,7 +200,18 @@ export const UserDashboard = () => {
         </Box>
       </Box>
 
-      <Box display='flex' flexDirection='column'>
+      <Box
+        display='flex'
+        flexDirection='column'
+        sx={{
+          backgroundColor: '#abdaea',
+          marginTop: '4rem',
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          borderRadius: '25px',
+          paddingBottom: '25px',
+        }}
+      >
         <Box my={[2]}>
           <Typography
             variant='body1'
@@ -190,7 +222,15 @@ export const UserDashboard = () => {
         </Box>
 
         <Box>
-          <ImageCarousel data={memories} />
+          {memories.length ? (
+            <ImageCarousel data={memories} />
+          ) : (
+            <Box display='flex' justifyContent='center' alignItems='center'>
+              <Typography variant='subtitle2' sx={{ color: 'white' }}>
+                No memories to show.
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

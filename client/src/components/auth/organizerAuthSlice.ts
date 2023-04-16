@@ -5,10 +5,11 @@ import type { RootState } from '../../app/type';
 import { AppRoutes } from '../../routing/routes';
 import {
   club,
+  createClubDataType,
   OrganizerLoginRequestPayload,
   OrganizerLoginResponsePayload,
 } from '../../boundaries/club-backend/model';
-import { OrganizerLogin } from '../../boundaries/club-backend/api';
+import { createClubAPI, OrganizerLogin } from '../../boundaries/club-backend/api';
 import {
   CreateEventRequestPayload,
   CreateEventResponsePayload,
@@ -61,6 +62,14 @@ export const CreateEventAsync = createAsyncThunk(
     console.log(data);
     window.location.assign(AppRoutes.ORGANIZER_DASHBOARD);
     return data;
+  }
+);
+
+export const createClubAsync = createAsyncThunk(
+  'club/createAsync',
+  async (payload: createClubDataType, thunkApi) => {
+    const response = await createClubAPI(payload);
+    console.log(response);
   }
 );
 
