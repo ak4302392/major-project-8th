@@ -1,7 +1,7 @@
 import axios from "axios";
 import { GetAvailabilityForDateRequest, GetAvailabilityForDateResponse } from "./model";
 
-const CLIENT_SERVICE_URL = "http://localhost:4001";
+const CLIENT_SERVICE_URL = `${ process.env.REACT_APP_BACKEND_URL }`;
 
 class SlotBookingServiceAppointmentApi {
   async getAvailabilityForDate(
