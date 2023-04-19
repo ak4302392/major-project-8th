@@ -66,7 +66,7 @@ export const OrganizerDashboard = () => {
         >
           <Box mb={[1, 2]}>
             <Typography variant='h6' color='white' textTransform='uppercase'>
-              UPCOMING EVENTS
+              CREATED EVENTS
             </Typography>
           </Box>
           <Box overflow='auto' className={classes.newsBox} height='auto'>
